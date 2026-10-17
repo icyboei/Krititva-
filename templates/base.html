@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Krititva — Architecting Value. Operationalizing Expertise.{% endblock %}</title>
+  <meta name="description" content="Krititva is a trust-centered professional expertise exchange and open-source capability discovery platform.">
+  
+  <!-- Google Fonts: Cormorant Garamond, Plus Jakarta Sans, Rozha One -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rozha+One&display=swap" rel="stylesheet">
+  
+  <!-- Krititva Custom Design System -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='images/krititva-emblem.jpg') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <!-- Global Site Navigation Header -->
+  <header class="site-header">
+    <div class="container nav-container">
+      <a href="{{ url_for('index') }}" class="brand-identity" aria-label="Krititva Home">
+        <div class="brand-emblem-wrapper">
+          <img src="{{ url_for('static', filename='images/krititva-emblem.jpg') }}" alt="Krititva Devanagari Emblem" class="brand-emblem-img">
+        </div>
+        <div class="brand-names">
+          <span class="brand-title">Krititva</span>
+          <span class="brand-subtext">कृतित्व</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Menu -->
+      <nav class="nav-menu" aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="#exchange" class="nav-link">Discover Capital</a></li>
+          <li><a href="#capabilities" class="nav-link">Capabilities</a></li>
+          <li><a href="{{ url_for('opensource_buddy') }}" class="nav-link">OpenSource Buddy</a></li>
+          <li><a href="#trust" class="nav-link">How It Works</a></li>
+          <li><a href="#about" class="nav-link">About Us</a></li>
+        </ul>
+      </nav>
+
+      <!-- Navigation Actions -->
+      <div class="nav-actions">
+        <a href="#signin" class="btn-enterprise-signin" id="btn-nav-signin">Enterprise Sign In</a>
+        <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
+          ☰
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer" id="about">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-identity" style="margin-bottom: 0.75rem;">
+            <div class="brand-emblem-wrapper" style="width: 36px; height: 36px;">
+              <img src="{{ url_for('static', filename='images/krititva-emblem.jpg') }}" alt="Krititva Emblem" class="brand-emblem-img">
+            </div>
+            <div class="brand-names">
+              <span class="brand-title" style="font-size: 1.3rem;">Krititva</span>
+              <span class="brand-subtext" style="font-size: 0.72rem;">कृतित्व</span>
+            </div>
+          </div>
+          <p>
+            Rooted in the Sanskrit concept of <em>कृतित्व</em> — representing the realized output of human intellect, strategic discipline, and applied effort.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h4>Platform</h4>
+          <ul class="footer-links">
+            <li><a href="{{ url_for('opensource_buddy') }}">OpenSource Buddy</a></li>
+            <li><a href="#capabilities">Procure Capability</a></li>
+            <li><a href="#capabilities">Commercialize Knowledge</a></li>
+            <li><a href="#trust">Trust & Delivery</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h4>Open Source</h4>
+          <ul class="footer-links">
+            <li><a href="https://github.com/icyboei/krititva" target="_blank" rel="noopener noreferrer">GitHub Repository ↗</a></li>
+            <li><a href="https://github.com/icyboei/krititva/issues" target="_blank" rel="noopener noreferrer">Issue Tracker ↗</a></li>
+            <li><a href="https://github.com/icyboei/krititva/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Krititva Ecosystem. All rights reserved. Built for MLH Hacktoberfest Hack Day.</div>
+        <div>Tagline: <em>Architecting Value. Operationalizing Expertise.</em></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application JS -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

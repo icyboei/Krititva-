@@ -1,0 +1,689 @@
+/* ==========================================================================
+   KRITITVA DESIGN SYSTEM
+   "Architecting Value. Operationalizing Expertise."
+   Rooted in the Sanskrit concept of कृतित्व (Krititva)
+   ========================================================================== */
+
+/* 1. Global CSS Custom Properties (Design Tokens) */
+:root {
+  /* Curated Warm Artisanal Palette */
+  --color-paper-ivory: #FAF6EF;
+  --color-warm-cream: #F2E8D8;
+  --color-cream-light: #FDFBF7;
+  --color-deep-espresso: #382318;
+  --color-terracotta: #AD4F32;
+  --color-terracotta-hover: #964027;
+  --color-burnished-copper: #B77A3D;
+  --color-muted-gold: #C99B5B;
+  --color-soft-border: #E2D2BC;
+  --color-border-subtle: #EDE2D3;
+  --color-muted-text: #78695C;
+  --color-white: #FFFFFF;
+
+  /* Typography */
+  --font-editorial: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-devanagari: 'Rozha One', 'Noto Serif Devanagari', serif;
+
+  /* Spacing Scale */
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4.5rem;
+
+  /* Shadows & Organic Radii */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+  --radius-organic-1: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  --radius-organic-2: 20px 255px 20px 255px / 255px 20px 255px 20px;
+  
+  --shadow-subtle: 0 4px 20px rgba(56, 35, 24, 0.05);
+  --shadow-elevated: 0 10px 30px rgba(56, 35, 24, 0.08);
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 2. Reset & Base Typography */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-paper-ivory);
+  color: var(--color-deep-espresso);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(201, 155, 91, 0.04) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, rgba(173, 79, 50, 0.04) 0%, transparent 25%),
+    radial-gradient(rgba(120, 105, 92, 0.06) 1px, transparent 0);
+  background-size: 100% 100%, 100% 100%, 32px 32px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* 3. Layout Containers */
+.container {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+/* 4. Navigation Header */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(250, 246, 239, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--color-soft-border);
+  transition: background-color var(--transition-fast);
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+}
+
+.brand-identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+}
+
+.brand-emblem-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-warm-cream);
+  border: 1.5px solid var(--color-muted-gold);
+  box-shadow: 0 2px 6px rgba(56, 35, 24, 0.08);
+}
+
+.brand-emblem-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.brand-names {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-family: var(--font-editorial);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-deep-espresso);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.brand-subtext {
+  font-family: var(--font-devanagari);
+  font-size: 0.8rem;
+  color: var(--color-burnished-copper);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xl);
+  list-style: none;
+}
+
+.nav-link {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-deep-espresso);
+  position: relative;
+  padding: var(--space-xs) 0;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-terracotta);
+  transition: width var(--transition-fast);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+/* Sign-in Pill CTA */
+.btn-enterprise-signin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-terracotta);
+  color: var(--color-white);
+  padding: 0.65rem 1.4rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.92rem;
+  font-weight: 600;
+  box-shadow: 0 3px 12px rgba(173, 79, 50, 0.25);
+  transition: all var(--transition-fast);
+}
+
+.btn-enterprise-signin:hover {
+  background: var(--color-terracotta-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 16px rgba(173, 79, 50, 0.35);
+}
+
+.mobile-menu-btn {
+  display: none;
+  font-size: 1.5rem;
+  color: var(--color-deep-espresso);
+  padding: var(--space-xs);
+}
+
+/* 5. Hero Section */
+.hero-section {
+  position: relative;
+  padding: var(--space-3xl) 0 var(--space-2xl);
+  overflow: hidden;
+}
+
+/* Decorative Botanical Line Branches */
+.botanical-branch {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.85;
+  z-index: 1;
+}
+
+.botanical-left {
+  top: 15%;
+  left: -20px;
+  width: 140px;
+  height: auto;
+  stroke: var(--color-burnished-copper);
+}
+
+.botanical-right {
+  top: 8%;
+  right: -20px;
+  width: 160px;
+  height: auto;
+  stroke: var(--color-burnished-copper);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 860px;
+  margin-bottom: var(--space-2xl);
+}
+
+.hero-title {
+  font-family: var(--font-editorial);
+  font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.12;
+  color: var(--color-deep-espresso);
+  margin-bottom: var(--space-md);
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  color: var(--color-muted-text);
+  line-height: 1.65;
+  max-width: 680px;
+  margin-bottom: var(--space-xl);
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+}
+
+/* Sketched Hand-Drawn Ring Button */
+.btn-hand-drawn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0.85rem 1.8rem;
+  background-color: transparent;
+  color: var(--color-deep-espresso);
+  font-weight: 600;
+  font-size: 1.05rem;
+  position: relative;
+  transition: all var(--transition-fast);
+  border: 2px solid var(--color-burnished-copper);
+  border-radius: var(--radius-organic-1);
+  box-shadow: 
+    0 0 0 2px var(--color-paper-ivory),
+    0 0 0 4px rgba(183, 122, 61, 0.4),
+    0 4px 12px rgba(183, 122, 61, 0.15);
+}
+
+.btn-hand-drawn:hover {
+  background-color: var(--color-warm-cream);
+  transform: translateY(-2px);
+  border-color: var(--color-terracotta);
+  color: var(--color-terracotta);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0.85rem 1.6rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-warm-cream);
+  color: var(--color-deep-espresso);
+  font-weight: 600;
+  font-size: 1rem;
+  border: 1px solid var(--color-soft-border);
+  transition: all var(--transition-fast);
+}
+
+.btn-secondary:hover {
+  background-color: #e8dccb;
+  border-color: var(--color-burnished-copper);
+  transform: translateY(-2px);
+}
+
+/* 6. Feature Cards (Handcrafted Outlines) */
+.feature-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-xl);
+  margin-top: var(--space-xl);
+  position: relative;
+  z-index: 2;
+}
+
+.handcrafted-card {
+  background-color: var(--color-warm-cream);
+  border: 1.5px solid var(--color-soft-border);
+  border-radius: var(--radius-organic-1);
+  padding: var(--space-xl);
+  box-shadow: 
+    0 0 0 3px rgba(226, 210, 188, 0.35),
+    var(--shadow-subtle);
+  transition: all var(--transition-smooth);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 220px;
+}
+
+.handcrafted-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 0 0 4px rgba(183, 122, 61, 0.4),
+    var(--shadow-elevated);
+  border-color: var(--color-burnished-copper);
+}
+
+.card-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.card-title {
+  font-family: var(--font-editorial);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-deep-espresso);
+  line-height: 1.2;
+}
+
+.card-illustration {
+  width: 90px;
+  height: 70px;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.card-description {
+  font-size: 0.95rem;
+  color: var(--color-muted-text);
+  line-height: 1.55;
+}
+
+.card-meta {
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px dashed var(--color-soft-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--color-burnished-copper);
+  font-weight: 600;
+}
+
+/* 7. OpenSource Buddy Spotlight Section */
+.spotlight-section {
+  padding: var(--space-3xl) 0;
+  background-color: rgba(242, 232, 216, 0.45);
+  border-top: 1px solid var(--color-soft-border);
+  border-bottom: 1px solid var(--color-soft-border);
+  margin-top: var(--space-2xl);
+  position: relative;
+}
+
+.section-tag {
+  display: inline-block;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--color-terracotta);
+  background: rgba(173, 79, 50, 0.1);
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-pill);
+  margin-bottom: var(--space-sm);
+}
+
+.section-heading {
+  font-family: var(--font-editorial);
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  color: var(--color-deep-espresso);
+  line-height: 1.2;
+  margin-bottom: var(--space-md);
+}
+
+.section-subtext {
+  font-size: 1.05rem;
+  color: var(--color-muted-text);
+  max-width: 650px;
+  margin-bottom: var(--space-xl);
+}
+
+.buddy-showcase {
+  background: var(--color-white);
+  border: 1.5px solid var(--color-soft-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-subtle);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  align-items: center;
+}
+
+.buddy-features-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.buddy-feature-item {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: flex-start;
+}
+
+.feature-icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: var(--color-warm-cream);
+  border: 1px solid var(--color-soft-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-terracotta);
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.feature-text-group h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-deep-espresso);
+}
+
+.feature-text-group p {
+  font-size: 0.88rem;
+  color: var(--color-muted-text);
+}
+
+.buddy-action-card {
+  background: var(--color-cream-light);
+  border: 1.5px dashed var(--color-burnished-copper);
+  border-radius: var(--radius-md);
+  padding: var(--space-xl);
+  text-align: center;
+}
+
+.buddy-action-card h3 {
+  font-family: var(--font-editorial);
+  font-size: 1.6rem;
+  color: var(--color-deep-espresso);
+  margin-bottom: var(--space-xs);
+}
+
+.buddy-action-card p {
+  font-size: 0.92rem;
+  color: var(--color-muted-text);
+  margin-bottom: var(--space-lg);
+}
+
+/* 8. Trust & Structured Delivery */
+.trust-section {
+  padding: var(--space-3xl) 0;
+}
+
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-xl);
+}
+
+.trust-item {
+  background: var(--color-cream-light);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  transition: transform var(--transition-fast);
+}
+
+.trust-item:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-muted-gold);
+}
+
+.trust-item-num {
+  font-family: var(--font-editorial);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-burnished-copper);
+  margin-bottom: var(--space-xs);
+}
+
+.trust-item h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-deep-espresso);
+  margin-bottom: var(--space-xs);
+}
+
+.trust-item p {
+  font-size: 0.88rem;
+  color: var(--color-muted-text);
+  line-height: 1.5;
+}
+
+/* 9. Site Footer */
+.site-footer {
+  margin-top: auto;
+  background-color: var(--color-warm-cream);
+  border-top: 1px solid var(--color-soft-border);
+  padding: var(--space-2xl) 0 var(--space-lg);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--space-2xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.footer-brand h3 {
+  font-family: var(--font-editorial);
+  font-size: 1.5rem;
+  color: var(--color-deep-espresso);
+  margin-bottom: var(--space-xs);
+}
+
+.footer-brand p {
+  font-size: 0.9rem;
+  color: var(--color-muted-text);
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+.footer-column h4 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-deep-espresso);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-md);
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.footer-links a {
+  font-size: 0.88rem;
+  color: var(--color-muted-text);
+}
+
+.footer-links a:hover {
+  color: var(--color-terracotta);
+}
+
+.footer-bottom {
+  padding-top: var(--space-lg);
+  border-top: 1px solid rgba(226, 210, 188, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  color: var(--color-muted-text);
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+/* 10. Responsive Breakpoints */
+@media (max-width: 900px) {
+  .nav-links {
+    display: none;
+  }
+
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  .buddy-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  .botanical-branch {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .nav-container {
+    height: 70px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-hand-drawn,
+  .btn-secondary {
+    justify-content: center;
+  }
+
+  .feature-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}

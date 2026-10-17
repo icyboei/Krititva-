@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Krititva — Architecting Value. Operationalizing Expertise.{% endblock %}
+
+{% block content %}
+<!-- Botanical Line Decorations (Matching Brand Reference) -->
+<svg class="botanical-branch botanical-left" viewBox="0 0 100 200" fill="none" stroke="#B77A3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M20,180 C40,140 25,90 45,20" />
+  <path d="M35,130 C60,120 70,105 60,95 C48,88 38,105 35,115" />
+  <path d="M28,80 C50,70 65,55 52,48 C40,42 32,60 30,70" />
+  <path d="M40,45 C55,35 60,20 48,15 C38,12 35,28 38,38" />
+  <circle cx="68" cy="98" r="2" fill="#AD4F32" />
+  <circle cx="58" cy="48" r="2" fill="#AD4F32" />
+</svg>
+
+<svg class="botanical-branch botanical-right" viewBox="0 0 100 200" fill="none" stroke="#B77A3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M80,180 C60,140 75,90 55,20" />
+  <path d="M65,130 C40,120 30,105 40,95 C52,88 62,105 65,115" />
+  <path d="M72,80 C50,70 35,55 48,48 C60,42 68,60 70,70" />
+  <path d="M60,45 C45,35 40,20 52,15 C62,12 65,28 62,38" />
+  <circle cx="32" cy="98" r="2" fill="#AD4F32" />
+  <circle cx="42" cy="48" r="2" fill="#AD4F32" />
+</svg>
+
+<!-- Hero Section -->
+<section class="hero-section" id="exchange">
+  <div class="container">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Architecting Value.<br>
+        Operationalizing Expertise.
+      </h1>
+      <p class="hero-subtitle">
+        Bridging enterprise procurement and independent human capital. A decentralized talent exchange built for the contemporary services economy.
+      </p>
+      
+      <div class="hero-actions">
+        <!-- Artisanal Hand-Drawn Ring CTA (Reference Match) -->
+        <a href="#capabilities" class="btn-hand-drawn" id="btn-hero-explore">
+          Explore Exchange &rarr;
+        </a>
+        <a href="{{ url_for('opensource_buddy') }}" class="btn-secondary" id="btn-hero-buddy">
+          Discover Open Source &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- Feature Cards Grid (Reference Match: Handcrafted Outlined Cards) -->
+    <div class="feature-cards-grid" id="capabilities">
+      <!-- Card 1: Procure Capability -->
+      <article class="handcrafted-card">
+        <div>
+          <div class="card-header-flex">
+            <h2 class="card-title">Procure<br>Capability</h2>
+            <!-- Clean Vector Illustration for Code & Milestone Workflow -->
+            <svg class="card-illustration" viewBox="0 0 120 90" fill="none" stroke="#382318" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="15" y="15" width="55" height="40" rx="3" stroke="#B77A3D" fill="#FAF6EF" />
+              <line x1="25" y1="27" x2="35" y2="35" stroke="#AD4F32" stroke-width="2" />
+              <line x1="35" y1="35" x2="25" y2="43" stroke="#AD4F32" stroke-width="2" />
+              <line x1="42" y1="43" x2="52" y2="43" stroke="#AD4F32" stroke-width="2" />
+              <line x1="42" y1="55" x2="42" y2="65" />
+              <line x1="30" y1="65" x2="54" y2="65" />
+              <!-- Workflow arrow to milestone node -->
+              <circle cx="95" cy="30" r="12" stroke="#AD4F32" stroke-dasharray="2 2" fill="#F2E8D8" />
+              <circle cx="95" cy="30" r="4" fill="#AD4F32" />
+              <path d="M70,35 C80,35 80,30 83,30" stroke="#B77A3D" />
+              <!-- Sub-card mini metric -->
+              <rect x="20" y="68" width="30" height="15" rx="2" stroke="#C99B5B" fill="#FFFFFF" />
+              <polyline points="24,78 30,73 36,76 44,71" stroke="#AD4F32" stroke-width="1.2" />
+            </svg>
+          </div>
+          <p class="card-description">
+            Access verified technical capabilities, scope milestone-based deliverables, and connect directly with independent specialists.
+          </p>
+        </div>
+        <div class="card-meta">
+          <span>Enterprise & Startup Procurement</span>
+          <span>Verified &rarr;</span>
+        </div>
+      </article>
+
+      <!-- Card 2: Commercialize Knowledge -->
+      <article class="handcrafted-card">
+        <div>
+          <div class="card-header-flex">
+            <h2 class="card-title">Commercialize<br>Knowledge</h2>
+            <!-- Clean Vector Illustration for Handshake & Verified Engagement -->
+            <svg class="card-illustration" viewBox="0 0 120 90" fill="none" stroke="#382318" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <!-- Timeline and verified gear -->
+              <circle cx="85" cy="25" r="10" stroke="#B77A3D" stroke-dasharray="3 2" />
+              <circle cx="85" cy="25" r="4" fill="#C99B5B" />
+              <circle cx="60" cy="20" r="8" stroke="#AD4F32" />
+              <polyline points="57,20 59,22 63,18" stroke="#AD4F32" stroke-width="1.5" />
+              <!-- Handshake outline -->
+              <path d="M35,65 L50,55 L65,65 L80,55" stroke="#382318" stroke-width="1.8" />
+              <path d="M42,50 L58,38 L72,48" stroke="#B77A3D" stroke-width="1.5" />
+              <path d="M50,55 C53,60 57,60 60,55" stroke="#AD4F32" />
+              <!-- Subtle wrist cuff hints -->
+              <line x1="30" y1="62" x2="38" y2="68" stroke="#78695C" stroke-width="1.5" />
+              <line x1="78" y1="52" x2="86" y2="58" stroke="#78695C" stroke-width="1.5" />
+            </svg>
+          </div>
+          <p class="card-description">
+            Transform demonstrated proficiency and open-source contributions into structured service agreements, verified portfolios, and bilateral trust.
+          </p>
+        </div>
+        <div class="card-meta">
+          <span>Independent Contributors & Agencies</span>
+          <span>Monetize &rarr;</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- OpenSource Buddy Spotlight Section (Milestone 1 Core Entry Point) -->
+<section class="spotlight-section" id="buddy-preview">
+  <div class="container">
+    <span class="section-tag">First Capability Experience</span>
+    <h2 class="section-heading">OpenSource Buddy by Krititva</h2>
+    <p class="section-subtext">
+      The first specialized discovery engine in the Krititva ecosystem. Empowering developers to discover real GitHub opportunities, understand complex issues, and build an evidence-backed portfolio.
+    </p>
+
+    <div class="buddy-showcase">
+      <ul class="buddy-features-list">
+        <li class="buddy-feature-item">
+          <div class="feature-icon-badge">1</div>
+          <div class="feature-text-group">
+            <h4>Live GitHub Discovery</h4>
+            <p>Direct integration with GitHub REST API to fetch real repository stars, languages, README documentation, and open issues.</p>
+          </div>
+        </li>
+        <li class="buddy-feature-item">
+          <div class="feature-icon-badge">2</div>
+          <div class="feature-text-group">
+            <h4>Beginner-Friendly Curation</h4>
+            <p>Filter genuine issues labeled <code>good first issue</code> and <code>help wanted</code> with transparent maintainer context.</p>
+          </div>
+        </li>
+        <li class="buddy-feature-item">
+          <div class="feature-icon-badge">3</div>
+          <div class="feature-text-group">
+            <h4>Gemma-Assisted Roadmaps</h4>
+            <p>Convert vague issue descriptions into step-by-step investigation sequences and actionable contribution plans.</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="buddy-action-card">
+        <h3>Ready to Explore?</h3>
+        <p>Analyze any public GitHub repository and uncover your next contribution opportunity.</p>
+        <a href="{{ url_for('opensource_buddy') }}" class="btn-hand-drawn" id="btn-launch-buddy">
+          Launch OpenSource Buddy &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How Trust and Structured Delivery Work -->
+<section class="trust-section" id="trust">
+  <div class="container">
+    <span class="section-tag">Platform Architecture</span>
+    <h2 class="section-heading">Architected on Bilateral Trust</h2>
+    <p class="section-subtext">
+      Krititva replaces vague freelancer claims with demonstrable evidence, structured milestones, and transparent capability discovery.
+    </p>
+
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="trust-item-num">01</div>
+        <h3>Demonstrated Evidence</h3>
+        <p>Capabilities are rooted in real code, public contributions, and verifiable project outcomes rather than self-reported resumes.</p>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-item-num">02</div>
+        <h3>Structured Briefs</h3>
+        <p>Clear deliverables, defined timelines, and transparent scope alignment protect both clients and providers before work starts.</p>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-item-num">03</div>
+        <h3>Milestone Governance</h3>
+        <p>Progress is tracked in verifiable stages, ensuring clarity, accountability, and seamless collaborative handoffs.</p>
+      </div>
+
+      <div class="trust-item">
+        <div class="trust-item-num">04</div>
+        <h3>Bilateral Reputation</h3>
+        <p>Fair, two-sided review mechanisms establish long-term professional credibility across the decentralized talent network.</p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
