@@ -30,17 +30,17 @@
     {% else %}
 
     <!-- Welcome & Storefront URL Banner -->
-    <div style="background: #ffffff; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-xl); box-shadow: var(--shadow-subtle);">
+    <div class="boxed-section" id="studio-overview-box">
       <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-md);">
         <div>
           <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
             <span class="meta-pill highlight">Studio Management Hub</span>
             <span style="font-size: 0.85rem; color: var(--color-muted-text);">Signed in as <strong>{{ current_user.name }}</strong></span>
           </div>
-          <h1 style="font-family: var(--font-editorial); font-size: 2.4rem; color: var(--color-deep-espresso); line-height: 1.15;">
+          <h1 style="font-family: var(--font-editorial); font-size: 2.4rem; color: var(--color-deep-espresso); line-height: 1.15; margin: 0 0 0.35rem 0;">
             {{ current_user.business_name }}
           </h1>
-          <p style="color: var(--color-muted-text); font-size: 0.95rem; margin-top: 0.2rem;">
+          <p style="color: var(--color-muted-text); font-size: 0.95rem; margin: 0;">
             Your instant SaaS business profile is live. No code, no web hosting fees, pure direct patron reach.
           </p>
         </div>
@@ -65,59 +65,62 @@
       </div>
 
       <!-- Quick Metrics Counters -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-md); margin-top: var(--space-xl); padding-top: var(--space-lg); border-top: 1px dashed var(--color-soft-border);">
-        <div style="background: var(--color-cream-light); padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-soft-border); text-align: center;">
-          <div style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text); text-transform: uppercase;">Active Listings</div>
-          <div style="font-family: var(--font-editorial); font-size: 2.2rem; font-weight: 700; color: var(--color-deep-espresso);">
-            {{ vendor_data.activities|length }}
-          </div>
-          <div style="font-size: 0.75rem; color: #2e7d32;">● Ready for orders</div>
+      <div class="boxed-grid-4" style="margin-top: var(--space-xl); padding-top: var(--space-lg); border-top: 1px dashed var(--color-soft-border);">
+        <div class="boxed-stat-card">
+          <div class="boxed-stat-label">Active Listings</div>
+          <div class="boxed-stat-num">{{ vendor_data.activities|length }}</div>
+          <div style="font-size: 0.75rem; color: #2e7d32; font-weight: 600; margin-top: 0.2rem;">● Ready for orders</div>
         </div>
 
-        <div style="background: var(--color-cream-light); padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-soft-border); text-align: center;">
-          <div style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text); text-transform: uppercase;">Average Rating</div>
-          <div style="font-family: var(--font-editorial); font-size: 2.2rem; font-weight: 700; color: var(--color-terracotta);">
-            {{ "%.1f"|format(vendor_data.avg_rating) }} ★
-          </div>
-          <div style="font-size: 0.75rem; color: var(--color-muted-text);">From verified patrons</div>
+        <div class="boxed-stat-card">
+          <div class="boxed-stat-label">Average Rating</div>
+          <div class="boxed-stat-num" style="color: var(--color-terracotta);">{{ "%.1f"|format(vendor_data.avg_rating) }} ★</div>
+          <div style="font-size: 0.75rem; color: var(--color-muted-text); margin-top: 0.2rem;">From verified patrons</div>
         </div>
 
-        <div style="background: var(--color-cream-light); padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-soft-border); text-align: center;">
-          <div style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text); text-transform: uppercase;">Client Reviews</div>
-          <div style="font-family: var(--font-editorial); font-size: 2.2rem; font-weight: 700; color: var(--color-deep-espresso);">
-            {{ vendor_data.reviews|length }}
-          </div>
-          <div style="font-size: 0.75rem; color: var(--color-muted-text);">100% genuine feedback</div>
+        <div class="boxed-stat-card">
+          <div class="boxed-stat-label">Client Reviews</div>
+          <div class="boxed-stat-num">{{ vendor_data.reviews|length }}</div>
+          <div style="font-size: 0.75rem; color: var(--color-muted-text); margin-top: 0.2rem;">100% genuine feedback</div>
         </div>
 
-        <div style="background: var(--color-cream-light); padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-soft-border); text-align: center;">
-          <div style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text); text-transform: uppercase;">Customer Inquiries</div>
-          <div style="font-family: var(--font-editorial); font-size: 2.2rem; font-weight: 700; color: var(--color-burnished-copper);">
-            {{ inquiries|length }}
-          </div>
-          <div style="font-size: 0.75rem; color: #2e7d32;">Direct leads & commissions</div>
+        <div class="boxed-stat-card">
+          <div class="boxed-stat-label">Customer Inquiries</div>
+          <div class="boxed-stat-num" style="color: var(--color-burnished-copper);">{{ inquiries|length }}</div>
+          <div style="font-size: 0.75rem; color: #2e7d32; font-weight: 600; margin-top: 0.2rem;">Direct leads & orders</div>
         </div>
       </div>
     </div>
 
     <!-- Management Sections: Listings & Inquiries -->
-    <div style="display: grid; grid-template-columns: 1fr; gap: var(--space-xl);">
+    <div style="display: flex; flex-direction: column; gap: var(--space-xl);">
       
       <!-- 1. My Listed Activities & Charges -->
-      <div style="background: #ffffff; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-xl);">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
-          <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso);">
-            My Listed Activities & Charges ({{ vendor_data.activities|length }})
-          </h2>
-          <button class="btn-secondary" onclick="openAddListingModal()" style="font-size: 0.88rem; padding: 0.5rem 1rem;">
-            + Add Activity
-          </button>
+      <div class="boxed-section" id="studio-activities-box">
+        <div class="boxed-section-header">
+          <div>
+            <h2 class="boxed-section-title">
+              <span>📋 My Listed Activities & Charges</span>
+              <span class="boxed-badge-pill">{{ vendor_data.activities|length }} Offerings</span>
+            </h2>
+            <p style="font-size: 0.88rem; color: var(--color-muted-text); margin: 0.25rem 0 0 0;">
+              Manage your craft offerings, customized session charges, and production turnarounds.
+            </p>
+          </div>
+          <div>
+            <button class="btn-secondary" onclick="openAddListingModal()" style="font-size: 0.88rem; padding: 0.55rem 1.1rem; border-radius: var(--radius-pill);">
+              + Add Activity
+            </button>
+          </div>
         </div>
 
         {% if vendor_data.activities|length == 0 %}
-        <p style="color: var(--color-muted-text); padding: var(--space-lg); text-align: center;">
-          No offerings currently listed. Add your first craft, workshop, or service with appropriate charges!
-        </p>
+        <div class="boxed-panel" style="text-align: center; padding: var(--space-xl);">
+          <p style="color: var(--color-muted-text); margin-bottom: var(--space-md);">
+            No offerings currently listed. Add your first craft, workshop, or service with appropriate charges!
+          </p>
+          <button class="btn-enterprise-signin" onclick="openAddListingModal()">+ Add Your First Activity</button>
+        </div>
         {% else %}
         <div style="overflow-x: auto;">
           <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem;">
@@ -165,19 +168,29 @@
       </div>
 
       <!-- 2. Customer Inquiries & Commissions Received -->
-      <div style="background: #ffffff; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-xl);">
-        <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso); margin-bottom: var(--space-md);">
-          Customer Inquiries & Order Requests ({{ inquiries|length }})
-        </h2>
+      <div class="boxed-section" id="studio-inquiries-box">
+        <div class="boxed-section-header">
+          <div>
+            <h2 class="boxed-section-title">
+              <span>✉ Customer Inquiries & Order Requests</span>
+              <span class="boxed-badge-pill">{{ inquiries|length }} Inquiries</span>
+            </h2>
+            <p style="font-size: 0.88rem; color: var(--color-muted-text); margin: 0.25rem 0 0 0;">
+              Direct patron commission requests, customization briefs, and order questions.
+            </p>
+          </div>
+        </div>
 
         {% if inquiries|length == 0 %}
-        <p style="color: var(--color-muted-text); padding: var(--space-lg); text-align: center;">
-          No customer inquiries received yet. Share your storefront link on social media to start receiving direct orders!
-        </p>
+        <div class="boxed-panel" style="text-align: center; padding: var(--space-xl);">
+          <p style="color: var(--color-muted-text); margin-bottom: var(--space-xs);">
+            No customer inquiries received yet. Share your storefront link on social media to start receiving direct orders!
+          </p>
+        </div>
         {% else %}
         <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
           {% for inq in inquiries %}
-          <div style="border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); padding: var(--space-md); background: var(--color-cream-light);">
+          <div class="boxed-panel" style="background: var(--color-cream-light);">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.35rem;">
               <div>
                 <strong style="color: var(--color-deep-espresso); font-size: 1rem;">{{ inq.client_name }}</strong>
@@ -192,7 +205,7 @@
             <div style="font-size: 0.85rem; font-weight: 700; color: var(--color-terracotta); margin-bottom: 0.25rem;">
               Interested In: {{ inq.activity_title }}
             </div>
-            <p style="font-size: 0.9rem; color: var(--color-deep-espresso); line-height: 1.5;">
+            <p style="font-size: 0.9rem; color: var(--color-deep-espresso); line-height: 1.5; margin: 0;">
               "{{ inq.message }}"
             </p>
           </div>

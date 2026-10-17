@@ -3,7 +3,7 @@
 {% block title %}Capabilities & Services Exchange | Krititva{% endblock %}
 
 {% block content %}
-<section class="exchange-hero" style="padding: var(--space-2xl) 0 var(--space-xl); background: var(--color-paper-ivory); border-bottom: 1px solid var(--color-soft-border);">
+<section class="exchange-hero" style="padding: var(--space-2xl) 0 var(--space-lg); background: var(--color-paper-ivory); border-bottom: 1px solid var(--color-soft-border);">
   <div class="container">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-lg);">
       <div style="max-width: 680px;">
@@ -11,8 +11,8 @@
         <h1 class="hero-title" style="font-size: clamp(2.2rem, 4vw, 3.2rem); margin-bottom: var(--space-xs);">
           Capabilities & Services Exchange
         </h1>
-        <p class="hero-subtitle" style="margin-bottom: var(--space-md); font-size: 1.1rem;">
-          Connecting enterprise procurement with verified independent contributors. Discover specialized capabilities, negotiate structured milestones, and collaborate in transparent work environments.
+        <p class="hero-subtitle" style="margin-bottom: var(--space-md); font-size: 1.05rem;">
+          Connecting enterprise procurement with verified independent contributors and homegrown creators. Discover specialized offerings, negotiate structured milestones, and engage in transparent work environments.
         </p>
       </div>
 
@@ -29,48 +29,59 @@
         </a>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- Live Search & Marketplace View Switcher -->
-    <div style="margin-top: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-md); border-top: 1px dashed var(--color-soft-border); padding-top: var(--space-md);">
-      
-      <!-- Search Form -->
-      <form action="{{ url_for('exchange') }}" method="GET" style="display: flex; gap: var(--space-sm); flex-wrap: wrap; max-width: 650px;">
+<!-- Boxed Exchange Workspace Section -->
+<section style="padding: var(--space-xl) 0 var(--space-3xl); background: var(--color-warm-cream);">
+  <div class="container">
+
+    <!-- BOX 1: CONTROL HUB (SEARCH, MODES, AND FILTER CHIPS) -->
+    <div class="control-hub-box" id="exchange-control-hub">
+      <!-- Search Form Row -->
+      <form action="{{ url_for('exchange') }}" method="GET" class="control-search-row">
         <input type="hidden" name="category" value="{{ active_category }}">
         <input type="hidden" name="tab" value="{{ active_tab }}">
-        <input 
-          type="text" 
-          name="q" 
-          value="{{ search_query }}" 
-          placeholder="Search by skill, service, provider name, or technology..." 
-          style="flex: 1; min-width: 260px; padding: 0.7rem 1.1rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-sans); background: #ffffff;"
-        >
-        <button type="submit" class="btn-secondary" style="padding: 0.7rem 1.4rem; font-size: 0.92rem;">
-          Search
+        <div style="position: relative; flex: 1; min-width: 280px;">
+          <input 
+            type="text" 
+            name="q" 
+            value="{{ search_query }}" 
+            placeholder="Search by skill, craft, provider name, or technology..." 
+            style="width: 100%; padding: 0.75rem 1.1rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-sans); background: #ffffff;"
+          >
+        </div>
+        <button type="submit" class="btn-secondary" style="padding: 0.75rem 1.5rem; font-size: 0.92rem;">
+          Search Directory
         </button>
         {% if search_query %}
-        <a href="{{ url_for('exchange', category=active_category, tab=active_tab) }}" style="padding: 0.7rem 0.5rem; font-size: 0.88rem; color: var(--color-terracotta); align-self: center;">
-          Clear
+        <a href="{{ url_for('exchange', category=active_category, tab=active_tab) }}" style="padding: 0.7rem 0.6rem; font-size: 0.88rem; color: var(--color-terracotta); font-weight: 600;">
+          ✕ Clear Query
         </a>
         {% endif %}
       </form>
 
-      <!-- View Switcher (Browse Storefronts vs Services vs Client Briefs) -->
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); margin-top: var(--space-xs);">
+      <!-- View Switcher & Filters Row -->
+      <div class="control-filter-row">
+        <!-- 3-Way Mode Switcher -->
         <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
-          <a href="{{ url_for('exchange', tab='storefronts', category=active_category, q=search_query) }}" class="btn-role-switch {% if active_tab == 'storefronts' %}active-role{% endif %}" style="padding: 0.5rem 1.2rem; border-radius: var(--radius-pill); font-size: 0.9rem; font-weight: 700; text-decoration: none; display: inline-block; background: {% if active_tab == 'storefronts' %}var(--color-deep-espresso){% else %}var(--color-warm-cream){% endif %}; color: {% if active_tab == 'storefronts' %}#ffffff{% else %}var(--color-deep-espresso){% endif %}; border: 1px solid var(--color-soft-border);">
-            Creator Storefronts ({{ vendors|length }})
+          <a href="{{ url_for('exchange', tab='storefronts', category=active_category, q=search_query) }}" class="btn-role-switch {% if active_tab == 'storefronts' %}active-role{% endif %}" style="padding: 0.5rem 1.2rem; border-radius: var(--radius-pill); font-size: 0.88rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; background: {% if active_tab == 'storefronts' %}var(--color-deep-espresso){% else %}var(--color-cream-light){% endif %}; color: {% if active_tab == 'storefronts' %}#ffffff{% else %}var(--color-deep-espresso){% endif %}; border: 1.5px solid {% if active_tab == 'storefronts' %}var(--color-deep-espresso){% else %}var(--color-soft-border){% endif %};">
+            <span>🎨 Creator Storefronts</span>
+            <span style="background: rgba(255,255,255,0.2); padding: 0.1rem 0.45rem; border-radius: var(--radius-pill); font-size: 0.78rem;">{{ vendors|length }}</span>
           </a>
-          <a href="{{ url_for('exchange', tab='services', category=active_category, q=search_query) }}" class="btn-role-switch {% if active_tab == 'services' %}active-role{% endif %}" style="padding: 0.5rem 1.2rem; border-radius: var(--radius-pill); font-size: 0.9rem; font-weight: 700; text-decoration: none; display: inline-block; background: {% if active_tab == 'services' %}var(--color-deep-espresso){% else %}var(--color-warm-cream){% endif %}; color: {% if active_tab == 'services' %}#ffffff{% else %}var(--color-deep-espresso){% endif %}; border: 1px solid var(--color-soft-border);">
-            Verified Capabilities ({{ services|length }})
+          <a href="{{ url_for('exchange', tab='services', category=active_category, q=search_query) }}" class="btn-role-switch {% if active_tab == 'services' %}active-role{% endif %}" style="padding: 0.5rem 1.2rem; border-radius: var(--radius-pill); font-size: 0.88rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; background: {% if active_tab == 'services' %}var(--color-deep-espresso){% else %}var(--color-cream-light){% endif %}; color: {% if active_tab == 'services' %}#ffffff{% else %}var(--color-deep-espresso){% endif %}; border: 1.5px solid {% if active_tab == 'services' %}var(--color-deep-espresso){% else %}var(--color-soft-border){% endif %};">
+            <span>⚡ Verified Capabilities</span>
+            <span style="background: rgba(255,255,255,0.2); padding: 0.1rem 0.45rem; border-radius: var(--radius-pill); font-size: 0.78rem;">{{ services|length }}</span>
           </a>
-          <a href="{{ url_for('exchange', tab='briefs', category=active_category, q=search_query) }}" class="btn-role-switch {% if active_tab == 'briefs' %}active-role{% endif %}" style="padding: 0.5rem 1.2rem; border-radius: var(--radius-pill); font-size: 0.9rem; font-weight: 700; text-decoration: none; display: inline-block; background: {% if active_tab == 'briefs' %}var(--color-deep-espresso){% else %}var(--color-warm-cream){% endif %}; color: {% if active_tab == 'briefs' %}#ffffff{% else %}var(--color-deep-espresso){% endif %}; border: 1px solid var(--color-soft-border);">
-            Client Project Briefs ({{ briefs|length }})
+          <a href="{{ url_for('exchange', tab='briefs', category=active_category, q=search_query) }}" class="btn-role-switch {% if active_tab == 'briefs' %}active-role{% endif %}" style="padding: 0.5rem 1.2rem; border-radius: var(--radius-pill); font-size: 0.88rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; background: {% if active_tab == 'briefs' %}var(--color-deep-espresso){% else %}var(--color-cream-light){% endif %}; color: {% if active_tab == 'briefs' %}#ffffff{% else %}var(--color-deep-espresso){% endif %}; border: 1.5px solid {% if active_tab == 'briefs' %}var(--color-deep-espresso){% else %}var(--color-soft-border){% endif %};">
+            <span>📋 Client Project Briefs</span>
+            <span style="background: rgba(255,255,255,0.2); padding: 0.1rem 0.45rem; border-radius: var(--radius-pill); font-size: 0.78rem;">{{ briefs|length }}</span>
           </a>
         </div>
 
-        <!-- Category Filters -->
+        <!-- Discipline / Craft Filter Chips -->
         <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
-          <span style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text);">Filter:</span>
+          <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted-text); margin-right: 0.2rem;">Discipline:</span>
           <a href="{{ url_for('exchange', tab=active_tab, category='all', q=search_query) }}" class="filter-chip {% if active_category == 'all' %}active{% endif %}">All</a>
           <a href="{{ url_for('exchange', tab=active_tab, category='Handmade', q=search_query) }}" class="filter-chip {% if active_category == 'Handmade' %}active{% endif %}">Crafts & Pottery</a>
           <a href="{{ url_for('exchange', tab=active_tab, category='Leather', q=search_query) }}" class="filter-chip {% if active_category == 'Leather' %}active{% endif %}">Leather Goods</a>
@@ -78,271 +89,282 @@
           <a href="{{ url_for('exchange', tab=active_tab, category='ai-engineering', q=search_query) }}" class="filter-chip {% if active_category == 'ai-engineering' %}active{% endif %}">AI & Tech</a>
         </div>
       </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- Main Listings Section -->
-<section style="padding: var(--space-2xl) 0 var(--space-3xl);">
-  <div class="container">
-
-    {% if active_tab == 'storefronts' %}
-    <!-- 1. Creator & Vendor Storefronts Showcase -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg); flex-wrap: wrap; gap: var(--space-sm);">
-      <div>
-        <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso);">
-          Independent Creator Storefronts & Profiles ({{ vendors|length }})
-        </h2>
-        <p style="font-size: 0.88rem; color: var(--color-muted-text); margin-top: 0.2rem;">
-          Homegrown artisans, side hustlers, and boutique service providers. No custom websites needed—explore profiles and genuine client reviews.
-        </p>
-      </div>
-      <a href="{{ url_for('auth_signup') }}" class="btn-enterprise-signin" style="font-size: 0.88rem; padding: 0.6rem 1.2rem;">
-        + Launch Your Storefront
-      </a>
     </div>
 
-    {% if vendors|length == 0 %}
-    <div style="background: var(--color-cream-light); border: 1.5px dashed var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-2xl); text-align: center;">
-      <h3 style="font-family: var(--font-editorial); font-size: 1.4rem; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">No creator storefronts matched your search</h3>
-      <p style="color: var(--color-muted-text); margin-bottom: var(--space-md);">Try adjusting your search keywords or resetting filters.</p>
-      <a href="{{ url_for('exchange', tab='storefronts') }}" class="btn-hand-drawn">Reset Filters</a>
-    </div>
-    {% endif %}
+    <!-- BOX 2: MAIN LISTINGS CONTAINER -->
+    <div class="boxed-section" id="exchange-listings-box">
 
-    <div class="storefronts-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: var(--space-xl);">
-      {% for v in vendors %}
-      <article class="handcrafted-card" style="min-height: auto; padding: var(--space-xl); background: #ffffff; display: flex; flex-direction: column; justify-content: space-between;">
+      {% if active_tab == 'storefronts' %}
+      <!-- Section Header -->
+      <div class="boxed-section-header">
         <div>
-          <!-- Header with Avatar & Details -->
-          <div style="display: flex; gap: var(--space-md); align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-border-subtle); padding-bottom: var(--space-sm);">
-            <div style="width: 58px; height: 58px; border-radius: var(--radius-pill); background: var(--color-paper-ivory); border: 2px solid var(--color-terracotta); display: flex; align-items: center; justify-content: center; font-family: var(--font-editorial); font-size: 1.5rem; font-weight: 700; color: var(--color-terracotta); flex-shrink: 0;">
-              {{ v.avatar_initials }}
-            </div>
-            <div style="flex: 1;">
-              <div style="display: flex; align-items: center; gap: 0.4rem;">
-                <h3 style="font-family: var(--font-editorial); font-size: 1.45rem; color: var(--color-deep-espresso); margin: 0;">
-                  {{ v.business_name }}
-                </h3>
-                {% if v.verified %}
-                <span title="Verified Artisan & Maker" style="color: #2e7d32; font-size: 0.85rem;">✓</span>
-                {% endif %}
-              </div>
-              <div style="font-size: 0.85rem; color: var(--color-muted-text); font-weight: 600;">
-                by {{ v.name }} &bull; {{ v.badge }}
-              </div>
-            </div>
-          </div>
-
-          <p style="font-size: 0.92rem; color: var(--color-deep-espresso); line-height: 1.55; margin-bottom: var(--space-md);">
-            {{ v.tagline }}
+          <h2 class="boxed-section-title">
+            <span>🎨 Independent Creator Storefronts & Profiles</span>
+            <span class="boxed-badge-pill">Storefronts ({{ vendors|length }})</span>
+          </h2>
+          <p style="font-size: 0.9rem; color: var(--color-muted-text); margin: 0.35rem 0 0 0;">
+            Homegrown artisans, side hustlers, and boutique service providers. No custom websites needed—explore profiles and genuine client reviews.
           </p>
-
-          <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap; margin-bottom: var(--space-md);">
-            <span class="meta-pill rating" style="font-size: 0.78rem;">
-              ★ {{ "%.1f"|format(v.avg_rating) }} ({{ v.reviews_count }} verified reviews)
-            </span>
-            <span class="meta-pill" style="font-size: 0.78rem;">
-              📍 {{ v.location }}
-            </span>
-            <span class="meta-pill highlight" style="font-size: 0.78rem;">
-              ⚡ Replies in {{ v.response_time }}
-            </span>
-          </div>
-
-          <!-- Featured Offerings Preview -->
-          {% if v.activities %}
-          <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted-text); margin-bottom: 0.35rem;">
-            Sample Listed Activities & Charges:
-          </div>
-          <div style="display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: var(--space-md);">
-            {% for act in v.activities[:2] %}
-            <div style="background: var(--color-cream-light); border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); padding: 0.35rem 0.65rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem;">
-              <span style="font-weight: 600; color: var(--color-deep-espresso);">{{ act.theme_icon or '✨' }} {{ act.title }}</span>
-              <span style="font-weight: 700; color: var(--color-terracotta);">{{ act.charges_display }}</span>
-            </div>
-            {% endfor %}
-          </div>
-          {% endif %}
         </div>
-
-        <div style="border-top: 1px dashed var(--color-soft-border); padding-top: var(--space-md); display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 0.8rem; color: var(--color-muted-text);">
-            {{ v.activities|length }} Activities Listed
-          </span>
-          <a href="{{ url_for('vendor_profile', username=v.username) }}" class="btn-hand-drawn" style="font-size: 0.88rem; padding: 0.45rem 1.1rem;">
-            Visit Storefront &rarr;
+        <div>
+          <a href="{{ url_for('auth_signup') }}" class="btn-enterprise-signin" style="font-size: 0.88rem; padding: 0.6rem 1.3rem;">
+            + Launch Your Storefront
           </a>
         </div>
-      </article>
-      {% endfor %}
-    </div>
+      </div>
 
-    {% elif active_tab == 'services' %}
-    <!-- 2. Capabilities Catalog (Services) -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
-      <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso);">
-        Available Verified Capabilities ({{ services|length }})
-      </h2>
-      <span style="font-size: 0.88rem; color: var(--color-muted-text);">
-        Demonstrated proficiency &bull; Evidence-backed reviews
-      </span>
-    </div>
+      {% if vendors|length == 0 %}
+      <div class="boxed-panel" style="text-align: center; padding: var(--space-2xl);">
+        <h3 style="font-family: var(--font-editorial); font-size: 1.4rem; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">No creator storefronts matched your search</h3>
+        <p style="color: var(--color-muted-text); margin-bottom: var(--space-md);">Try adjusting your search keywords or resetting filters.</p>
+        <a href="{{ url_for('exchange', tab='storefronts') }}" class="btn-hand-drawn">Reset Filters</a>
+      </div>
+      {% endif %}
 
-    {% if services|length == 0 %}
-    <div style="background: var(--color-cream-light); border: 1.5px dashed var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-2xl); text-align: center;">
-      <h3 style="font-family: var(--font-editorial); font-size: 1.4rem; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">No capabilities matched your filter</h3>
-      <p style="color: var(--color-muted-text); margin-bottom: var(--space-md);">Try adjusting your search keywords or category filter.</p>
-      <a href="{{ url_for('exchange') }}" class="btn-hand-drawn">Reset Filters</a>
-    </div>
-    {% endif %}
-
-    <div class="services-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--space-xl);">
-      {% for service in services %}
-      <article class="service-card handcrafted-card" style="min-height: auto; justify-content: flex-start; gap: var(--space-md);">
-        <!-- Provider Info Banner -->
-        <div style="display: flex; align-items: center; gap: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid var(--color-border-subtle);">
-          <div style="width: 44px; height: 44px; border-radius: var(--radius-pill); background: var(--color-paper-ivory); border: 1.5px solid var(--color-burnished-copper); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--color-terracotta);">
-            {{ service.provider.avatar_initials }}
-          </div>
-          <div style="flex: 1;">
-            <div style="display: flex; align-items: center; gap: 0.35rem;">
-              <span style="font-weight: 700; font-size: 0.95rem; color: var(--color-deep-espresso);">{{ service.provider.name }}</span>
-              {% if service.provider.verified %}
-              <span title="Verified Evidence-Backed Provider" style="color: #2e7d32; font-size: 0.85rem;">&#10004;</span>
-              {% endif %}
+      <div class="boxed-grid-3">
+        {% for v in vendors %}
+        <article class="boxed-card">
+          <!-- Card Header Box -->
+          <div class="boxed-card-header">
+            <div style="display: flex; gap: var(--space-sm); align-items: center;">
+              <div style="width: 52px; height: 52px; border-radius: var(--radius-pill); background: var(--color-paper-ivory); border: 2px solid var(--color-terracotta); display: flex; align-items: center; justify-content: center; font-family: var(--font-editorial); font-size: 1.4rem; font-weight: 700; color: var(--color-terracotta); flex-shrink: 0;">
+                {{ v.avatar_initials }}
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.35rem;">
+                  <h3 style="font-family: var(--font-editorial); font-size: 1.3rem; color: var(--color-deep-espresso); margin: 0;">
+                    {{ v.business_name }}
+                  </h3>
+                  {% if v.verified %}
+                  <span title="Verified Artisan & Maker" style="color: #2e7d32; font-size: 0.85rem;">✓</span>
+                  {% endif %}
+                </div>
+                <div style="font-size: 0.82rem; color: var(--color-muted-text); font-weight: 600;">
+                  by {{ v.name }} &bull; {{ v.badge }}
+                </div>
+              </div>
             </div>
-            <div style="font-size: 0.8rem; color: var(--color-muted-text);">{{ service.provider.title }}</div>
-          </div>
-          <div style="text-align: right; font-size: 0.8rem; color: var(--color-burnished-copper); font-weight: 600;">
-            &#9733; {{ service.provider.rating }} ({{ service.provider.completed_engagements }})
-          </div>
-        </div>
-
-        <!-- Capability Title & Description -->
-        <div>
-          <h3 style="font-family: var(--font-editorial); font-size: 1.45rem; line-height: 1.25; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">
-            {{ service.title }}
-          </h3>
-          <p style="font-size: 0.92rem; color: var(--color-muted-text); line-height: 1.55;">
-            {{ service.description }}
-          </p>
-        </div>
-
-        <!-- Skills Tags -->
-        <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
-          {% for skill in service.provider.skills %}
-          <span style="background: var(--color-paper-ivory); border: 1px solid var(--color-soft-border); padding: 0.2rem 0.55rem; border-radius: var(--radius-pill); font-size: 0.75rem; color: var(--color-deep-espresso);">
-            {{ skill }}
-          </span>
-          {% endfor %}
-        </div>
-
-        <!-- Structured Scope & Deliverables Preview -->
-        <div style="background: var(--color-cream-light); border: 1px dashed var(--color-soft-border); border-radius: var(--radius-sm); padding: var(--space-sm);">
-          <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--color-burnished-copper); letter-spacing: 0.05em; margin-bottom: 0.3rem;">
-            Standard Scope & Deliverables:
-          </div>
-          <ul style="list-style: none; font-size: 0.82rem; color: var(--color-muted-text); display: flex; flex-direction: column; gap: 0.25rem;">
-            {% for item in service.deliverables[:3] %}
-            <li style="display: flex; align-items: flex-start; gap: 0.35rem;">
-              <span style="color: var(--color-terracotta);">&bull;</span> {{ item }}
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-
-        <!-- Commercial Terms Footer -->
-        <div style="margin-top: auto; padding-top: var(--space-sm); border-top: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-xs);">
-          <div>
-            <div style="font-size: 0.75rem; color: var(--color-muted-text); text-transform: uppercase;">Indicative Rate</div>
-            <div style="font-weight: 700; font-size: 1.1rem; color: var(--color-terracotta);">{{ service.indicative_pricing }}</div>
-          </div>
-          <div style="text-align: right;">
-            <div style="font-size: 0.75rem; color: var(--color-muted-text); text-transform: uppercase;">Engagement Model</div>
-            <div style="font-weight: 600; font-size: 0.88rem; color: var(--color-deep-espresso);">{{ service.pricing_type }}</div>
-          </div>
-        </div>
-
-        <!-- Interaction CTA Button -->
-        <div style="display: flex; gap: var(--space-xs); margin-top: var(--space-xs);">
-          <button 
-            type="button" 
-            class="btn-hand-drawn btn-trigger-engage" 
-            data-service-id="{{ service.id }}"
-            data-service-title="{{ service.title }}"
-            data-provider-name="{{ service.provider.name }}"
-            data-pricing="{{ service.indicative_pricing }}"
-            style="flex: 1; justify-content: center; font-size: 0.88rem; padding: 0.6rem 1rem;"
-          >
-            Engage & Open Brief &rarr;
-          </button>
-        </div>
-      </article>
-      {% endfor %}
-    </div>
-
-    {% else %}
-    <!-- 2. Client Project Briefs Tab -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
-      <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso);">
-        Open Client Project Briefs ({{ briefs|length }})
-      </h2>
-      <span style="font-size: 0.88rem; color: var(--color-muted-text);">
-        Structured RFP requests &bull; Escrow-ready budgets
-      </span>
-    </div>
-
-    {% if briefs|length == 0 %}
-    <div style="background: var(--color-cream-light); border: 1.5px dashed var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-2xl); text-align: center;">
-      <h3 style="font-family: var(--font-editorial); font-size: 1.4rem; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">No project briefs currently match</h3>
-      <p style="color: var(--color-muted-text); margin-bottom: var(--space-md);">Be the first client to publish an open project brief.</p>
-      <button class="btn-enterprise-signin" id="btn-open-brief-modal-empty">+ Post a Project Brief</button>
-    </div>
-    {% endif %}
-
-    <div class="briefs-grid" style="display: flex; flex-direction: column; gap: var(--space-lg);">
-      {% for brief in briefs %}
-      <article class="handcrafted-card" style="min-height: auto; padding: var(--space-xl); background: var(--color-white);">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-sm); margin-bottom: var(--space-xs);">
-          <div>
-            <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: 0.3rem;">
-              <span class="section-tag" style="margin-bottom: 0; font-size: 0.72rem;">{{ brief.category }}</span>
-              <span style="font-size: 0.8rem; color: var(--color-muted-text);">Posted {{ brief.posted_date }} by <strong>{{ brief.client_name }}</strong></span>
-            </div>
-            <h3 style="font-family: var(--font-editorial); font-size: 1.6rem; color: var(--color-deep-espresso); margin: 0.2rem 0;">
-              {{ brief.title }}
-            </h3>
-          </div>
-          <div style="text-align: right;">
-            <div style="font-size: 0.75rem; color: var(--color-muted-text); text-transform: uppercase;">Allocated Budget</div>
-            <div style="font-weight: 700; font-size: 1.3rem; color: var(--color-terracotta);">{{ brief.budget }}</div>
-            <span style="font-size: 0.75rem; background: #e8f5e9; color: #2e7d32; padding: 0.15rem 0.5rem; border-radius: var(--radius-pill); font-weight: 600;">
-              {{ brief.status }}
+            <span class="meta-pill rating" style="font-size: 0.78rem;">
+              ★ {{ "%.1f"|format(v.avg_rating) }} ({{ v.reviews_count }})
             </span>
           </div>
-        </div>
 
-        <p style="color: var(--color-muted-text); font-size: 0.95rem; line-height: 1.6; margin: var(--space-sm) 0;">
-          {{ brief.scope }}
-        </p>
+          <!-- Card Body -->
+          <div class="boxed-card-body">
+            <p style="font-size: 0.9rem; color: var(--color-deep-espresso); line-height: 1.5; margin: 0 0 var(--space-xs) 0;">
+              {{ v.tagline }}
+            </p>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--color-soft-border); padding-top: var(--space-sm); margin-top: var(--space-sm); flex-wrap: wrap; gap: var(--space-xs);">
-          <div style="font-size: 0.85rem; color: var(--color-burnished-copper); font-weight: 600;">
-            Target Timeline: {{ brief.timeline }} &bull; {{ brief.proposals_count }} Proposals Received
+            <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap; margin-bottom: var(--space-xs);">
+              <span class="meta-pill" style="font-size: 0.75rem;">📍 {{ v.location }}</span>
+              <span class="meta-pill highlight" style="font-size: 0.75rem;">⚡ Replies in {{ v.response_time }}</span>
+            </div>
+
+            <!-- Inclusions Box for Preview Charges -->
+            {% if v.activities %}
+            <div class="inclusions-boxed-container">
+              <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted-text); margin-bottom: 0.25rem;">
+                Sample Listed Activity & Charges:
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem;">
+                <span style="font-weight: 600; color: var(--color-deep-espresso);">{{ v.activities[0].title }}</span>
+                <strong style="color: var(--color-terracotta); font-size: 0.92rem;">{{ v.activities[0].charges_display }}</strong>
+              </div>
+            </div>
+            {% endif %}
           </div>
-          <div>
-            <a href="{{ url_for('workspace') }}" class="btn-hand-drawn" style="font-size: 0.85rem; padding: 0.5rem 1.2rem;">
+
+          <!-- Card Footer Box -->
+          <div class="boxed-card-footer">
+            <span style="font-size: 0.8rem; color: var(--color-muted-text);">
+              {{ v.activities|length }} Offerings Listed
+            </span>
+            <a href="{{ url_for('vendor_profile', username=v.username) }}" class="btn-hand-drawn" style="font-size: 0.85rem; padding: 0.45rem 1.1rem;">
+              Visit Storefront &rarr;
+            </a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+
+      {% elif active_tab == 'services' %}
+      <!-- 2. Capabilities Catalog (Services) -->
+      <div class="boxed-section-header">
+        <div>
+          <h2 class="boxed-section-title">
+            <span>⚡ Available Verified Capabilities</span>
+            <span class="boxed-badge-pill">Capabilities ({{ services|length }})</span>
+          </h2>
+          <p style="font-size: 0.9rem; color: var(--color-muted-text); margin: 0.35rem 0 0 0;">
+            Demonstrated proficiency &bull; Evidence-backed reviews &bull; Milestone-governed delivery
+          </p>
+        </div>
+        <div>
+          <button class="btn-secondary" onclick="document.getElementById('modal-list-service').style.display='flex'" style="font-size: 0.88rem; padding: 0.6rem 1.3rem; border-radius: var(--radius-pill);">
+            + List Your Capability
+          </button>
+        </div>
+      </div>
+
+      {% if services|length == 0 %}
+      <div class="boxed-panel" style="text-align: center; padding: var(--space-2xl);">
+        <h3 style="font-family: var(--font-editorial); font-size: 1.4rem; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">No capabilities matched your filter</h3>
+        <p style="color: var(--color-muted-text); margin-bottom: var(--space-md);">Try adjusting your search keywords or category filter.</p>
+        <a href="{{ url_for('exchange', tab='services') }}" class="btn-hand-drawn">Reset Filters</a>
+      </div>
+      {% endif %}
+
+      <div class="boxed-grid-3">
+        {% for service in services %}
+        <article class="boxed-card service-card">
+          <!-- Card Header Box -->
+          <div class="boxed-card-header">
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <div style="width: 44px; height: 44px; border-radius: var(--radius-pill); background: var(--color-paper-ivory); border: 1.5px solid var(--color-burnished-copper); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--color-terracotta);">
+                {{ service.provider.avatar_initials }}
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.35rem;">
+                  <span style="font-weight: 700; font-size: 0.95rem; color: var(--color-deep-espresso);">{{ service.provider.name }}</span>
+                  {% if service.provider.verified %}
+                  <span title="Verified Evidence-Backed Provider" style="color: #2e7d32; font-size: 0.85rem;">&#10004;</span>
+                  {% endif %}
+                </div>
+                <div style="font-size: 0.78rem; color: var(--color-muted-text);">{{ service.provider.title }}</div>
+              </div>
+            </div>
+            <div style="font-size: 0.8rem; color: var(--color-burnished-copper); font-weight: 700;">
+              &#9733; {{ service.provider.rating }} ({{ service.provider.completed_engagements }})
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="boxed-card-body">
+            <h3 style="font-family: var(--font-editorial); font-size: 1.35rem; line-height: 1.25; color: var(--color-deep-espresso); margin-bottom: 0.35rem;">
+              {{ service.title }}
+            </h3>
+            <p style="font-size: 0.88rem; color: var(--color-muted-text); line-height: 1.5; margin-bottom: 0.4rem;">
+              {{ service.description }}
+            </p>
+
+            <div style="display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.4rem;">
+              {% for skill in service.provider.skills %}
+              <span style="background: var(--color-paper-ivory); border: 1px solid var(--color-soft-border); padding: 0.15rem 0.5rem; border-radius: var(--radius-pill); font-size: 0.72rem; color: var(--color-deep-espresso);">
+                {{ skill }}
+              </span>
+              {% endfor %}
+            </div>
+
+            <!-- Inclusions Box for Deliverables Preview -->
+            <div class="inclusions-boxed-container">
+              <div style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; color: var(--color-burnished-copper); letter-spacing: 0.05em; margin-bottom: 0.2rem;">
+                Scope & Deliverables:
+              </div>
+              <ul style="list-style: none; font-size: 0.8rem; color: var(--color-deep-espresso); display: flex; flex-direction: column; gap: 0.2rem; padding: 0; margin: 0;">
+                {% for item in service.deliverables[:2] %}
+                <li style="display: flex; align-items: flex-start; gap: 0.35rem;">
+                  <span style="color: var(--color-terracotta);">&bull;</span> {{ item }}
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+
+          <!-- Card Footer Box -->
+          <div class="boxed-card-footer">
+            <div>
+              <div style="font-size: 0.72rem; color: var(--color-muted-text); text-transform: uppercase;">Indicative Rate</div>
+              <div style="font-weight: 700; font-size: 1.05rem; color: var(--color-terracotta);">{{ service.indicative_pricing }}</div>
+            </div>
+            <button 
+              type="button" 
+              class="btn-hand-drawn btn-trigger-engage" 
+              data-service-id="{{ service.id }}"
+              data-service-title="{{ service.title }}"
+              data-provider-name="{{ service.provider.name }}"
+              data-pricing="{{ service.indicative_pricing }}"
+              style="font-size: 0.85rem; padding: 0.5rem 1rem;"
+            >
+              Engage &rarr;
+            </button>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+
+      {% else %}
+      <!-- 3. Client Project Briefs Tab -->
+      <div class="boxed-section-header">
+        <div>
+          <h2 class="boxed-section-title">
+            <span>📋 Open Client Project Briefs</span>
+            <span class="boxed-badge-pill">Briefs ({{ briefs|length }})</span>
+          </h2>
+          <p style="font-size: 0.9rem; color: var(--color-muted-text); margin: 0.35rem 0 0 0;">
+            Structured RFP requests &bull; Escrow-ready budgets &bull; Milestone governance
+          </p>
+        </div>
+        <div>
+          <button class="btn-enterprise-signin" onclick="document.getElementById('modal-project-brief').style.display='flex'" style="font-size: 0.88rem; padding: 0.6rem 1.3rem;">
+            + Post a Project Brief
+          </button>
+        </div>
+      </div>
+
+      {% if briefs|length == 0 %}
+      <div class="boxed-panel" style="text-align: center; padding: var(--space-2xl);">
+        <h3 style="font-family: var(--font-editorial); font-size: 1.4rem; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">No project briefs currently match</h3>
+        <p style="color: var(--color-muted-text); margin-bottom: var(--space-md);">Be the first client to publish an open project brief.</p>
+        <button class="btn-enterprise-signin" onclick="document.getElementById('modal-project-brief').style.display='flex'">+ Post a Project Brief</button>
+      </div>
+      {% endif %}
+
+      <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
+        {% for brief in briefs %}
+        <article class="boxed-card">
+          <!-- Card Header Box -->
+          <div class="boxed-card-header">
+            <div>
+              <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: 0.2rem;">
+                <span class="section-tag" style="margin-bottom: 0; font-size: 0.72rem;">{{ brief.category }}</span>
+                <span style="font-size: 0.8rem; color: var(--color-muted-text);">Posted {{ brief.posted_date }} by <strong>{{ brief.client_name }}</strong></span>
+              </div>
+              <h3 style="font-family: var(--font-editorial); font-size: 1.5rem; color: var(--color-deep-espresso); margin: 0.1rem 0;">
+                {{ brief.title }}
+              </h3>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 0.72rem; color: var(--color-muted-text); text-transform: uppercase;">Allocated Budget</div>
+              <div style="font-weight: 700; font-size: 1.25rem; color: var(--color-terracotta);">{{ brief.budget }}</div>
+              <span style="font-size: 0.72rem; background: #e8f5e9; color: #2e7d32; padding: 0.15rem 0.5rem; border-radius: var(--radius-pill); font-weight: 700;">
+                {{ brief.status }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="boxed-card-body">
+            <p style="color: var(--color-muted-text); font-size: 0.92rem; line-height: 1.55; margin: 0;">
+              {{ brief.scope }}
+            </p>
+          </div>
+
+          <!-- Card Footer Box -->
+          <div class="boxed-card-footer">
+            <div style="font-size: 0.82rem; color: var(--color-burnished-copper); font-weight: 600;">
+              Target Timeline: {{ brief.timeline }} &bull; {{ brief.proposals_count }} Proposals Received
+            </div>
+            <a href="{{ url_for('workspace') }}" class="btn-hand-drawn" style="font-size: 0.85rem; padding: 0.45rem 1.1rem;">
               Submit Proposal / Open Workspace &rarr;
             </a>
           </div>
-        </div>
-      </article>
-      {% endfor %}
-    </div>
+        </article>
+        {% endfor %}
+      </div>
 
-    {% endif %}
+      {% endif %}
+
+    </div>
 
   </div>
 </section>
