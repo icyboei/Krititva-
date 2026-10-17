@@ -7,7 +7,7 @@
   <div class="container">
     <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-md);">
       <div>
-        <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: 0.4rem;">
+        <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: 0.4rem; flex-wrap: wrap;">
           <a href="{{ url_for('exchange') }}" style="font-size: 0.85rem; color: var(--color-terracotta); font-weight: 600;">&larr; Return to Exchange</a>
           <span style="color: var(--color-soft-border);">&bull;</span>
           <span class="section-tag" style="margin-bottom: 0;">Bilateral Engagement Workspace</span>
@@ -25,7 +25,7 @@
 
       <!-- Financial & Escrow Overview -->
       <div class="handcrafted-card" style="padding: var(--space-md) var(--space-lg); min-height: auto; align-self: center; background: var(--color-white); border-color: var(--color-burnished-copper);">
-        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-muted-text); font-weight: 700;">Milestone Value</div>
+        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-muted-text); font-weight: 700;">Total Engagement Value</div>
         <div style="font-size: 1.8rem; font-weight: 700; color: var(--color-terracotta); font-family: var(--font-editorial);">{{ engagement.total_value }}</div>
         <div style="font-size: 0.8rem; color: var(--color-burnished-copper); font-weight: 600;">Governed via Verified Escrow</div>
       </div>
@@ -67,13 +67,15 @@
   <div class="container">
     <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: var(--space-2xl); align-items: start;">
       
-      <!-- LEFT COLUMN: Structured Milestones & Deliverables -->
+      <!-- LEFT COLUMN: Structured Milestones & Governance -->
       <div>
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
           <h2 style="font-family: var(--font-editorial); font-size: 1.7rem; color: var(--color-deep-espresso);">
             Engagement Milestones & Governance
           </h2>
-          <span style="font-size: 0.85rem; color: var(--color-muted-text);">3 Total Milestones</span>
+          <span style="font-size: 0.85rem; color: var(--color-muted-text);">
+            {{ engagement.milestones|length }} Defined Milestones
+          </span>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: var(--space-md);">
@@ -102,18 +104,27 @@
               <span style="color: var(--color-muted-text);">{{ m.deliverable }}</span>
             </div>
 
-            <!-- Notes & Client Approval Action -->
+            <!-- Notes & Context -->
             <p style="font-size: 0.84rem; color: var(--color-muted-text); margin-bottom: var(--space-xs);">
               {{ m.notes }}
             </p>
 
-            {% if m.status == 'In Review' %}
-            <div style="display: flex; gap: var(--space-xs); margin-top: var(--space-xs);">
-              <button class="btn-hand-drawn btn-approve-milestone" data-id="{{ m.id }}" style="font-size: 0.84rem; padding: 0.5rem 1rem;">
+            <!-- Interactive Actions based on Milestone Status -->
+            <div style="display: flex; gap: var(--space-xs); margin-top: var(--space-xs); flex-wrap: wrap;">
+              {% if m.status == 'In Review' %}
+              <button class="btn-hand-drawn btn-approve-milestone" data-id="{{ m.id }}" data-eng-id="{{ engagement.id }}" style="font-size: 0.84rem; padding: 0.5rem 1rem;">
                 Client Action: Approve Deliverable & Release {{ m.amount }} &rarr;
               </button>
+              {% elif m.status == 'Approved & Released' %}
+              <span style="color: #2e7d32; font-weight: 700; font-size: 0.84rem;">
+                &#10004; Funds Released from Escrow
+              </span>
+              {% else %}
+              <button class="btn-secondary btn-submit-deliverable-modal" data-id="{{ m.id }}" data-title="{{ m.title }}" style="font-size: 0.84rem; padding: 0.45rem 0.9rem;">
+                Provider Action: Submit Deliverable for Review &rarr;
+              </button>
+              {% endif %}
             </div>
-            {% endif %}
           </div>
           {% endfor %}
         </div>
@@ -136,10 +147,10 @@
             <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-deep-espresso);">Simulate Chatting As:</span>
             <div style="display: flex; gap: 0.35rem;">
               <button type="button" class="btn-role-switch active-role" data-role="client" style="font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: var(--radius-pill); font-weight: 700; background: var(--color-deep-espresso); color: #fff;">
-                Client (Aura)
+                Client ({{ engagement.client.name.split()[0] }})
               </button>
               <button type="button" class="btn-role-switch" data-role="provider" style="font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: var(--radius-pill); font-weight: 600; background: var(--color-paper-ivory); color: var(--color-deep-espresso); border: 1px solid var(--color-soft-border);">
-                Provider (Devratna)
+                Provider ({{ engagement.provider.name.split()[0] }})
               </button>
             </div>
           </div>
@@ -152,7 +163,7 @@
                 <span style="font-size: 0.78rem; font-weight: 700; color: {% if msg.sender == 'client' %}var(--color-deep-espresso){% else %}var(--color-terracotta){% endif %};">
                   {{ msg.author }}
                 </span>
-                <span style="font-size: 0.7rem; color: var(--color-muted-text);">{{ msg.timestamp }}</span>
+                <span style="font-size: 0.7rem; color: var(--color-muted-text);">${{ msg.timestamp }}</span>
               </div>
               <p style="font-size: 0.88rem; color: var(--color-deep-espresso); line-height: 1.45; margin: 0;">
                 {{ msg.content }}
@@ -162,7 +173,7 @@
           </div>
 
           <!-- Message Input Box -->
-          <form id="chat-input-form" style="padding: 0.75rem 1rem; border-top: 1px solid var(--color-soft-border); display: flex; gap: var(--space-xs); background: var(--color-cream-light);">
+          <form id="chat-input-form" data-eng-id="{{ engagement.id }}" style="padding: 0.75rem 1rem; border-top: 1px solid var(--color-soft-border); display: flex; gap: var(--space-xs); background: var(--color-cream-light);">
             <input 
               type="text" 
               id="chat-message-input" 
@@ -180,4 +191,40 @@
     </div>
   </div>
 </section>
+
+<!-- Modal: Provider Submit Deliverable -->
+<div id="modal-submit-deliverable" class="modal-backdrop" style="display: none;">
+  <div class="modal-dialog handcrafted-card" style="background: var(--color-white); max-width: 540px; width: 90%; margin: 8vh auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-soft-border); padding-bottom: var(--space-sm);">
+      <h3 style="font-family: var(--font-editorial); font-size: 1.5rem; color: var(--color-deep-espresso);">
+        Submit Milestone Deliverable (Provider)
+      </h3>
+      <button type="button" class="btn-close-modal" style="font-size: 1.4rem; color: var(--color-muted-text);">&times;</button>
+    </div>
+
+    <form id="form-submit-deliverable" style="display: flex; flex-direction: column; gap: var(--space-md);">
+      <input type="hidden" id="submit-milestone-id">
+      <input type="hidden" id="submit-eng-id" value="{{ engagement.id }}">
+
+      <div style="font-weight: 600; color: var(--color-deep-espresso);" id="submit-milestone-title">
+        Milestone Title
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Deliverable Link (GitHub PR, Commit, or Docs)</label>
+        <input type="url" id="deliverable-url" placeholder="https://github.com/organization/repo/pull/42" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Deliverable Summary & Review Notes</label>
+        <textarea id="deliverable-notes" rows="3" placeholder="Explain the key achievements, automated tests added, and verification evidence..." required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-sm); margin-top: var(--space-sm);">
+        <button type="button" class="btn-secondary btn-close-modal" style="padding: 0.6rem 1.2rem;">Cancel</button>
+        <button type="submit" class="btn-enterprise-signin" style="padding: 0.6rem 1.4rem;">Submit for Client Review &rarr;</button>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}

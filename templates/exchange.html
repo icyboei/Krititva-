@@ -16,7 +16,7 @@
         </p>
       </div>
 
-      <!-- Quick Action Buttons for Both Roles -->
+      <!-- Quick Action Modals Trigger -->
       <div style="display: flex; flex-direction: column; gap: var(--space-sm); align-self: center;">
         <button class="btn-enterprise-signin" id="btn-open-brief-modal" style="font-size: 0.95rem; padding: 0.75rem 1.6rem; text-align: center;">
           + Post a Project Brief (Client)
@@ -30,20 +30,61 @@
       </div>
     </div>
 
-    <!-- Category Filter Bar -->
-    <div class="filter-bar" style="margin-top: var(--space-xl); display: flex; align-items: center; gap: var(--space-xs); flex-wrap: wrap; border-top: 1px dashed var(--color-soft-border); padding-top: var(--space-md);">
-      <span style="font-size: 0.88rem; font-weight: 700; color: var(--color-deep-espresso); margin-right: var(--space-xs);">Filter by Capability:</span>
-      <a href="{{ url_for('exchange', category='all') }}" class="filter-chip {% if active_category == 'all' %}active{% endif %}">All Capabilities</a>
-      <a href="{{ url_for('exchange', category='ai-engineering') }}" class="filter-chip {% if active_category == 'ai-engineering' %}active{% endif %}">AI & Agent Systems</a>
-      <a href="{{ url_for('exchange', category='security-audit') }}" class="filter-chip {% if active_category == 'security-audit' %}active{% endif %}">Security & OSS Audits</a>
-      <a href="{{ url_for('exchange', category='data-infrastructure') }}" class="filter-chip {% if active_category == 'data-infrastructure' %}active{% endif %}">Data & Cloud Infrastructure</a>
+    <!-- Live Search & Marketplace View Switcher -->
+    <div style="margin-top: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-md); border-top: 1px dashed var(--color-soft-border); padding-top: var(--space-md);">
+      
+      <!-- Search Form -->
+      <form action="{{ url_for('exchange') }}" method="GET" style="display: flex; gap: var(--space-sm); flex-wrap: wrap; max-width: 650px;">
+        <input type="hidden" name="category" value="{{ active_category }}">
+        <input type="hidden" name="tab" value="{{ active_tab }}">
+        <input 
+          type="text" 
+          name="q" 
+          value="{{ search_query }}" 
+          placeholder="Search by skill, service, provider name, or technology..." 
+          style="flex: 1; min-width: 260px; padding: 0.7rem 1.1rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-sans); background: #ffffff;"
+        >
+        <button type="submit" class="btn-secondary" style="padding: 0.7rem 1.4rem; font-size: 0.92rem;">
+          Search
+        </button>
+        {% if search_query %}
+        <a href="{{ url_for('exchange', category=active_category, tab=active_tab) }}" style="padding: 0.7rem 0.5rem; font-size: 0.88rem; color: var(--color-terracotta); align-self: center;">
+          Clear
+        </a>
+        {% endif %}
+      </form>
+
+      <!-- View Switcher (Browse Services vs Client Briefs) -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); margin-top: var(--space-xs);">
+        <div style="display: flex; gap: var(--space-xs);">
+          <a href="{{ url_for('exchange', tab='services', category=active_category, q=search_query) }}" class="btn-role-switch {% if active_tab == 'services' %}active-role{% endif %}" style="padding: 0.5rem 1.2rem; border-radius: var(--radius-pill); font-size: 0.9rem; font-weight: 700; text-decoration: none; display: inline-block; background: {% if active_tab == 'services' %}var(--color-deep-espresso){% else %}var(--color-warm-cream){% endif %}; color: {% if active_tab == 'services' %}#ffffff{% else %}var(--color-deep-espresso){% endif %}; border: 1px solid var(--color-soft-border);">
+            Verified Capabilities ({{ services|length }})
+          </a>
+          <a href="{{ url_for('exchange', tab='briefs', category=active_category, q=search_query) }}" class="btn-role-switch {% if active_tab == 'briefs' %}active-role{% endif %}" style="padding: 0.5rem 1.2rem; border-radius: var(--radius-pill); font-size: 0.9rem; font-weight: 700; text-decoration: none; display: inline-block; background: {% if active_tab == 'briefs' %}var(--color-deep-espresso){% else %}var(--color-warm-cream){% endif %}; color: {% if active_tab == 'briefs' %}#ffffff{% else %}var(--color-deep-espresso){% endif %}; border: 1px solid var(--color-soft-border);">
+            Client Project Briefs ({{ briefs|length }})
+          </a>
+        </div>
+
+        <!-- Category Filters -->
+        <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+          <span style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text);">Filter:</span>
+          <a href="{{ url_for('exchange', tab=active_tab, category='all', q=search_query) }}" class="filter-chip {% if active_category == 'all' %}active{% endif %}">All</a>
+          <a href="{{ url_for('exchange', tab=active_tab, category='ai-engineering', q=search_query) }}" class="filter-chip {% if active_category == 'ai-engineering' %}active{% endif %}">AI & Agents</a>
+          <a href="{{ url_for('exchange', tab=active_tab, category='security-audit', q=search_query) }}" class="filter-chip {% if active_category == 'security-audit' %}active{% endif %}">Security Audits</a>
+          <a href="{{ url_for('exchange', tab=active_tab, category='data-infrastructure', q=search_query) }}" class="filter-chip {% if active_category == 'data-infrastructure' %}active{% endif %}">Data Pipelines</a>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<!-- Capability Listings Grid -->
+<!-- Main Listings Section -->
 <section style="padding: var(--space-2xl) 0 var(--space-3xl);">
   <div class="container">
+
+    {% if active_tab == 'services' %}
+    <!-- 1. Capabilities Catalog (Services) -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
       <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso);">
         Available Verified Capabilities ({{ services|length }})
@@ -52,6 +93,14 @@
         Demonstrated proficiency &bull; Evidence-backed reviews
       </span>
     </div>
+
+    {% if services|length == 0 %}
+    <div style="background: var(--color-cream-light); border: 1.5px dashed var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-2xl); text-align: center;">
+      <h3 style="font-family: var(--font-editorial); font-size: 1.4rem; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">No capabilities matched your filter</h3>
+      <p style="color: var(--color-muted-text); margin-bottom: var(--space-md);">Try adjusting your search keywords or category filter.</p>
+      <a href="{{ url_for('exchange') }}" class="btn-hand-drawn">Reset Filters</a>
+    </div>
+    {% endif %}
 
     <div class="services-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--space-xl);">
       {% for service in services %}
@@ -122,13 +171,83 @@
 
         <!-- Interaction CTA Button -->
         <div style="display: flex; gap: var(--space-xs); margin-top: var(--space-xs);">
-          <a href="{{ url_for('workspace') }}" class="btn-hand-drawn" style="flex: 1; justify-content: center; font-size: 0.88rem; padding: 0.6rem 1rem;">
+          <button 
+            type="button" 
+            class="btn-hand-drawn btn-trigger-engage" 
+            data-service-id="{{ service.id }}"
+            data-service-title="{{ service.title }}"
+            data-provider-name="{{ service.provider.name }}"
+            data-pricing="{{ service.indicative_pricing }}"
+            style="flex: 1; justify-content: center; font-size: 0.88rem; padding: 0.6rem 1rem;"
+          >
             Engage & Open Brief &rarr;
-          </a>
+          </button>
         </div>
       </article>
       {% endfor %}
     </div>
+
+    {% else %}
+    <!-- 2. Client Project Briefs Tab -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
+      <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso);">
+        Open Client Project Briefs ({{ briefs|length }})
+      </h2>
+      <span style="font-size: 0.88rem; color: var(--color-muted-text);">
+        Structured RFP requests &bull; Escrow-ready budgets
+      </span>
+    </div>
+
+    {% if briefs|length == 0 %}
+    <div style="background: var(--color-cream-light); border: 1.5px dashed var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-2xl); text-align: center;">
+      <h3 style="font-family: var(--font-editorial); font-size: 1.4rem; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">No project briefs currently match</h3>
+      <p style="color: var(--color-muted-text); margin-bottom: var(--space-md);">Be the first client to publish an open project brief.</p>
+      <button class="btn-enterprise-signin" id="btn-open-brief-modal-empty">+ Post a Project Brief</button>
+    </div>
+    {% endif %}
+
+    <div class="briefs-grid" style="display: flex; flex-direction: column; gap: var(--space-lg);">
+      {% for brief in briefs %}
+      <article class="handcrafted-card" style="min-height: auto; padding: var(--space-xl); background: var(--color-white);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-sm); margin-bottom: var(--space-xs);">
+          <div>
+            <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: 0.3rem;">
+              <span class="section-tag" style="margin-bottom: 0; font-size: 0.72rem;">{{ brief.category }}</span>
+              <span style="font-size: 0.8rem; color: var(--color-muted-text);">Posted {{ brief.posted_date }} by <strong>{{ brief.client_name }}</strong></span>
+            </div>
+            <h3 style="font-family: var(--font-editorial); font-size: 1.6rem; color: var(--color-deep-espresso); margin: 0.2rem 0;">
+              {{ brief.title }}
+            </h3>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.75rem; color: var(--color-muted-text); text-transform: uppercase;">Allocated Budget</div>
+            <div style="font-weight: 700; font-size: 1.3rem; color: var(--color-terracotta);">{{ brief.budget }}</div>
+            <span style="font-size: 0.75rem; background: #e8f5e9; color: #2e7d32; padding: 0.15rem 0.5rem; border-radius: var(--radius-pill); font-weight: 600;">
+              {{ brief.status }}
+            </span>
+          </div>
+        </div>
+
+        <p style="color: var(--color-muted-text); font-size: 0.95rem; line-height: 1.6; margin: var(--space-sm) 0;">
+          {{ brief.scope }}
+        </p>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--color-soft-border); padding-top: var(--space-sm); margin-top: var(--space-sm); flex-wrap: wrap; gap: var(--space-xs);">
+          <div style="font-size: 0.85rem; color: var(--color-burnished-copper); font-weight: 600;">
+            Target Timeline: {{ brief.timeline }} &bull; {{ brief.proposals_count }} Proposals Received
+          </div>
+          <div>
+            <a href="{{ url_for('workspace') }}" class="btn-hand-drawn" style="font-size: 0.85rem; padding: 0.5rem 1.2rem;">
+              Submit Proposal / Open Workspace &rarr;
+            </a>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    {% endif %}
+
   </div>
 </section>
 
@@ -148,19 +267,25 @@
         <input type="text" id="brief-title" placeholder="e.g., Secure LLM Gateway Architecture with Audit Trail" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
       </div>
 
-      <div>
-        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Target Capability Category</label>
-        <select id="brief-category" style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
-          <option value="ai-engineering">AI & Agent Systems Architecture</option>
-          <option value="security-audit">Open-Source Security & Codebase Audits</option>
-          <option value="data-infrastructure">Data & Cloud Pipelines</option>
-          <option value="general">Full-Stack Capability</option>
-        </select>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+        <div>
+          <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Your Organization / Client Name</label>
+          <input type="text" id="brief-client-name" placeholder="Aura Labs or Independent" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Capability Category</label>
+          <select id="brief-category" style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+            <option value="ai-engineering">AI & Agent Systems</option>
+            <option value="security-audit">Security & OSS Audits</option>
+            <option value="data-infrastructure">Data & Cloud Pipelines</option>
+            <option value="general">General Full-Stack</option>
+          </select>
+        </div>
       </div>
 
       <div>
         <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Scope & Problem Statement</label>
-        <textarea id="brief-scope" rows="3" placeholder="Describe the problem, current state, and clear technical requirements..." required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);"></textarea>
+        <textarea id="brief-scope" rows="3" placeholder="Describe the technical deliverables, existing setup, and milestones needed..." required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);"></textarea>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
@@ -206,13 +331,19 @@
         <input type="text" id="service-title" placeholder="e.g., Python Flask & Gemma AI Integration Service" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
       </div>
 
-      <div>
-        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Category</label>
-        <select id="service-category" style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
-          <option value="ai-engineering">AI & Agent Systems</option>
-          <option value="security-audit">Security & OSS Audits</option>
-          <option value="data-infrastructure">Data & Cloud Infrastructure</option>
-        </select>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+        <div>
+          <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Category</label>
+          <select id="service-category" style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+            <option value="ai-engineering">AI & Agent Systems</option>
+            <option value="security-audit">Security & OSS Audits</option>
+            <option value="data-infrastructure">Data & Cloud Pipelines</option>
+          </select>
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Skills (Comma-separated)</label>
+          <input type="text" id="service-skills" placeholder="Python, Gemma, Flask, Testing" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+        </div>
       </div>
 
       <div>
@@ -234,6 +365,53 @@
       <div style="display: flex; justify-content: flex-end; gap: var(--space-sm); margin-top: var(--space-sm);">
         <button type="button" class="btn-secondary btn-close-modal" style="padding: 0.6rem 1.2rem;">Cancel</button>
         <button type="submit" class="btn-enterprise-signin" style="padding: 0.6rem 1.4rem;">Publish Capability Listing &rarr;</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal 3: Initiate Engagement & Custom Brief (Client -> Provider) -->
+<div id="modal-engage-provider" class="modal-backdrop" style="display: none;">
+  <div class="modal-dialog handcrafted-card" style="background: var(--color-white); max-width: 580px; width: 90%; margin: 5vh auto; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-soft-border); padding-bottom: var(--space-sm);">
+      <h3 style="font-family: var(--font-editorial); font-size: 1.6rem; color: var(--color-deep-espresso);">
+        Initiate Milestone Engagement
+      </h3>
+      <button type="button" class="btn-close-modal" style="font-size: 1.4rem; color: var(--color-muted-text);">&times;</button>
+    </div>
+
+    <form id="form-engage-provider" style="display: flex; flex-direction: column; gap: var(--space-md);">
+      <input type="hidden" id="engage-service-id">
+
+      <div style="background: var(--color-warm-cream); border-radius: var(--radius-sm); padding: var(--space-sm);">
+        <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--color-burnished-copper);">Selected Provider:</div>
+        <div id="engage-provider-name" style="font-weight: 700; font-size: 1.05rem; color: var(--color-deep-espresso);">Provider Name</div>
+        <div id="engage-service-title" style="font-size: 0.88rem; color: var(--color-muted-text);">Service Title</div>
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Your Client / Company Name</label>
+        <input type="text" id="engage-client-name" placeholder="Aura Enterprise or Personal" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Custom Project Title</label>
+        <input type="text" id="engage-project-title" placeholder="Project Name" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Agreed Engagement Budget (₹ INR)</label>
+        <input type="text" id="engage-budget" placeholder="₹1,50,000" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Initial Milestone Deliverable Scope</label>
+        <textarea id="engage-scope" rows="3" placeholder="Outline the first milestone goals and expected deliverables..." required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);"></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-sm); margin-top: var(--space-sm);">
+        <button type="button" class="btn-secondary btn-close-modal" style="padding: 0.6rem 1.2rem;">Cancel</button>
+        <button type="submit" class="btn-enterprise-signin" style="padding: 0.6rem 1.4rem;">Launch Project Workspace &rarr;</button>
       </div>
     </form>
   </div>

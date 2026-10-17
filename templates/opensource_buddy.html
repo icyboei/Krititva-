@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}OpenSource Buddy — Discover. Understand. Contribute. | Krititva{% endblock %}
+{% block title %}OpenSource Buddy — Live GitHub Capability Discovery | Krititva{% endblock %}
 
 {% block content %}
 <section class="hero-section" style="padding-top: var(--space-2xl); padding-bottom: var(--space-xl);">
@@ -11,52 +11,172 @@
         OpenSource Buddy
       </h1>
       <p class="hero-subtitle" style="margin-bottom: var(--space-md);">
-        Discover real open-source opportunities, understand complex codebase requirements, and build your portfolio of demonstrated technical work.
+        Discover genuine open-source opportunities, understand complex codebase requirements, and build your portfolio of demonstrated technical work.
       </p>
     </div>
 
-    <!-- Repository Input Container -->
-    <div class="handcrafted-card" style="min-height: auto; margin-bottom: var(--space-2xl);">
+    <!-- Repository Analysis Form -->
+    <div class="handcrafted-card" style="min-height: auto; margin-bottom: var(--space-xl); background: var(--color-white);">
       <form id="repo-analysis-form" style="display: flex; flex-direction: column; gap: var(--space-md);">
-        <label for="repo-url-input" style="font-weight: 600; font-size: 1rem; color: var(--color-deep-espresso);">
-          GitHub Repository URL
+        <label for="repo-url-input" style="font-weight: 700; font-size: 1.05rem; color: var(--color-deep-espresso);">
+          Analyze Public GitHub Repository
         </label>
         
         <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
           <input 
-            type="url" 
+            type="text" 
             id="repo-url-input" 
             name="repo_url" 
-            placeholder="https://github.com/owner/repository (e.g., https://github.com/pallets/flask)" 
+            placeholder="https://github.com/owner/repository (e.g. pallets/flask or tiangolo/fastapi)" 
             required 
-            style="flex: 1; min-width: 280px; padding: 0.85rem 1.2rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 1rem; background-color: var(--color-white); font-family: var(--font-sans);"
+            style="flex: 1; min-width: 280px; padding: 0.85rem 1.2rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 1rem; background-color: var(--color-paper-ivory); font-family: var(--font-sans);"
           >
           <button type="submit" class="btn-hand-drawn" id="btn-analyze-repo" style="border-radius: var(--radius-sm); padding: 0.85rem 1.8rem;">
             Analyze Repository &rarr;
           </button>
         </div>
 
+        <!-- Quick Examples Chips -->
         <div style="display: flex; align-items: center; gap: var(--space-xs); font-size: 0.85rem; color: var(--color-muted-text); flex-wrap: wrap;">
-          <span>Try quick examples:</span>
-          <button type="button" class="example-repo-chip" data-repo="https://github.com/pallets/flask" style="background: var(--color-paper-ivory); border: 1px solid var(--color-soft-border); padding: 0.25rem 0.6rem; border-radius: var(--radius-pill); font-size: 0.82rem; color: var(--color-terracotta);">
+          <span>Try popular open-source projects:</span>
+          <button type="button" class="example-repo-chip" data-repo="pallets/flask" style="background: var(--color-warm-cream); border: 1px solid var(--color-soft-border); padding: 0.25rem 0.65rem; border-radius: var(--radius-pill); font-size: 0.82rem; color: var(--color-terracotta); font-weight: 600;">
             pallets/flask
           </button>
-          <button type="button" class="example-repo-chip" data-repo="https://github.com/psf/requests" style="background: var(--color-paper-ivory); border: 1px solid var(--color-soft-border); padding: 0.25rem 0.6rem; border-radius: var(--radius-pill); font-size: 0.82rem; color: var(--color-terracotta);">
+          <button type="button" class="example-repo-chip" data-repo="psf/requests" style="background: var(--color-warm-cream); border: 1px solid var(--color-soft-border); padding: 0.25rem 0.65rem; border-radius: var(--radius-pill); font-size: 0.82rem; color: var(--color-terracotta); font-weight: 600;">
             psf/requests
+          </button>
+          <button type="button" class="example-repo-chip" data-repo="tiangolo/fastapi" style="background: var(--color-warm-cream); border: 1px solid var(--color-soft-border); padding: 0.25rem 0.65rem; border-radius: var(--radius-pill); font-size: 0.82rem; color: var(--color-terracotta); font-weight: 600;">
+            tiangolo/fastapi
           </button>
         </div>
       </form>
     </div>
 
-    <!-- Milestone 1 Initial State Banner -->
-    <div id="repo-status-container" style="background: var(--color-cream-light); border: 1.5px dashed var(--color-burnished-copper); border-radius: var(--radius-md); padding: var(--space-xl); text-align: center;">
-      <h3 style="font-family: var(--font-editorial); font-size: 1.6rem; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">
-        Ready for Repository Discovery (Milestone 2 Next)
-      </h3>
-      <p style="color: var(--color-muted-text); max-width: 600px; margin: 0 auto; font-size: 0.95rem; line-height: 1.6;">
-        Milestone 1 established the design foundation and layout. In Milestone 2, entering a public GitHub URL will fetch live metadata, README preview, and beginner-friendly issues directly via the GitHub REST API!
-      </p>
+    <!-- Dynamic Status Banner / Loading Spinner -->
+    <div id="repo-loading" style="display: none; text-align: center; padding: var(--space-2xl); background: var(--color-cream-light); border-radius: var(--radius-md); border: 1px dashed var(--color-burnished-copper); margin-bottom: var(--space-xl);">
+      <div style="font-size: 1.5rem; margin-bottom: 0.5rem; animation: spin 1s infinite linear;">⚙️</div>
+      <h3 style="font-family: var(--font-editorial); font-size: 1.5rem; color: var(--color-deep-espresso);">Fetching Live Repository & Issue Telemetry...</h3>
+      <p style="color: var(--color-muted-text); font-size: 0.9rem;">Connecting directly to GitHub REST API v3.</p>
     </div>
+
+    <!-- Error Banner -->
+    <div id="repo-error-box" style="display: none; background: #ffebee; border: 1px solid #ef9a9a; border-radius: var(--radius-md); padding: var(--space-md); color: #c62828; margin-bottom: var(--space-xl);">
+      <strong>Error:</strong> <span id="repo-error-message"></span>
+    </div>
+
+    <!-- Results Container (Hidden initially until repo is analyzed) -->
+    <div id="repo-results-container" style="display: none; flex-direction: column; gap: var(--space-2xl);">
+      
+      <!-- Repository Overview Card -->
+      <article class="handcrafted-card" style="min-height: auto; background: var(--color-white); padding: var(--space-xl);">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-md); margin-bottom: var(--space-md);">
+          <div>
+            <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: 0.25rem;">
+              <span id="repo-lang-badge" class="section-tag" style="margin-bottom: 0; font-size: 0.75rem;">Python</span>
+              <span id="repo-license-badge" style="font-size: 0.78rem; color: var(--color-muted-text); border: 1px solid var(--color-soft-border); padding: 0.15rem 0.5rem; border-radius: var(--radius-pill);">MIT</span>
+            </div>
+            <h2 id="repo-full-name" style="font-family: var(--font-editorial); font-size: 2.2rem; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+              owner/repository
+            </h2>
+            <p id="repo-description" style="color: var(--color-muted-text); font-size: 1rem; max-width: 750px; line-height: 1.6;">
+              Repository description goes here.
+            </p>
+          </div>
+          <div>
+            <a id="repo-github-link" href="#" target="_blank" rel="noopener noreferrer" class="btn-hand-drawn" style="font-size: 0.88rem; padding: 0.6rem 1.2rem;">
+              View on GitHub ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Telemetry Metrics Bar -->
+        <div style="display: flex; gap: var(--space-xl); border-top: 1px dashed var(--color-soft-border); padding-top: var(--space-md); flex-wrap: wrap;">
+          <div>
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-muted-text); font-weight: 700;">GitHub Stars</div>
+            <div id="repo-stars-count" style="font-size: 1.4rem; font-weight: 700; color: var(--color-terracotta);">0</div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-muted-text); font-weight: 700;">Forks</div>
+            <div id="repo-forks-count" style="font-size: 1.4rem; font-weight: 700; color: var(--color-deep-espresso);">0</div>
+          </div>
+          <div>
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-muted-text); font-weight: 700;">Open Issues</div>
+            <div id="repo-open-issues-count" style="font-size: 1.4rem; font-weight: 700; color: var(--color-burnished-copper);">0</div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Expandable README Viewer -->
+      <div class="handcrafted-card" style="min-height: auto; background: var(--color-cream-light); padding: var(--space-lg);">
+        <details>
+          <summary style="font-weight: 700; font-size: 1.05rem; color: var(--color-deep-espresso); cursor: pointer; user-select: none;">
+            📄 Expand Repository README Documentation Preview
+          </summary>
+          <pre id="repo-readme-content" style="margin-top: var(--space-md); padding: var(--space-md); background: var(--color-white); border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); white-space: pre-wrap; font-family: monospace; font-size: 0.85rem; max-height: 400px; overflow-y: auto; color: var(--color-deep-espresso);"></pre>
+        </details>
+      </div>
+
+      <!-- Live Issues Discovery Section -->
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); flex-wrap: wrap; gap: var(--space-sm);">
+          <div>
+            <h2 style="font-family: var(--font-editorial); font-size: 1.9rem; color: var(--color-deep-espresso);">
+              Real Open Issues &amp; Contribution Opportunities
+            </h2>
+            <p style="font-size: 0.88rem; color: var(--color-muted-text);">
+              Showing active open issues fetched live via GitHub API (Pull requests excluded).
+            </p>
+          </div>
+
+          <!-- Issue Label Filter -->
+          <div style="display: flex; gap: 0.35rem; align-items: center;">
+            <button type="button" class="filter-chip active issue-filter-btn" data-filter="all">All Open Issues</button>
+            <button type="button" class="filter-chip issue-filter-btn" data-filter="first">Good First Issues Only</button>
+            <button type="button" class="filter-chip issue-filter-btn" data-filter="help">Help Wanted</button>
+          </div>
+        </div>
+
+        <div id="issues-list-container" style="display: flex; flex-direction: column; gap: var(--space-md);">
+          <!-- Dynamic Issue Cards will be injected here -->
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </section>
+
+<!-- Modal: AI Issue Breakdown & Contribution Roadmap -->
+<div id="modal-ai-roadmap" class="modal-backdrop" style="display: none;">
+  <div class="modal-dialog handcrafted-card" style="background: var(--color-white); max-width: 720px; width: 92%; margin: 5vh auto; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-soft-border); padding-bottom: var(--space-sm);">
+      <div>
+        <span class="section-tag" style="margin-bottom: 0.2rem;">Gemma AI Mentorship</span>
+        <h3 id="roadmap-modal-title" style="font-family: var(--font-editorial); font-size: 1.6rem; color: var(--color-deep-espresso);">
+          Issue Breakdown &amp; Roadmap
+        </h3>
+      </div>
+      <button type="button" class="btn-close-modal" style="font-size: 1.4rem; color: var(--color-muted-text);">&times;</button>
+    </div>
+
+    <!-- AI Disclaimer Badge -->
+    <div id="roadmap-disclaimer" style="background: #fff8e1; border: 1px solid #ffe082; border-radius: var(--radius-sm); padding: 0.6rem 0.85rem; font-size: 0.82rem; color: #855700; margin-bottom: var(--space-md);">
+      ⚠️ <strong>AI-Assisted Guidance:</strong> Distinguishes confirmed GitHub facts from model suggestions. Confirm requirements with maintainers before opening a PR.
+    </div>
+
+    <!-- Roadmap Content -->
+    <div id="roadmap-content-body" style="font-size: 0.95rem; line-height: 1.65; color: var(--color-deep-espresso); white-space: pre-line; background: var(--color-paper-ivory); border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); padding: var(--space-lg); max-height: 450px; overflow-y: auto;">
+      Generating structured investigation steps...
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: var(--space-md); border-top: 1px solid var(--color-soft-border); padding-top: var(--space-sm);">
+      <button type="button" id="btn-copy-roadmap" class="btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+        📋 Copy Roadmap to Clipboard
+      </button>
+      <button type="button" class="btn-enterprise-signin btn-close-modal" style="font-size: 0.88rem; padding: 0.5rem 1.2rem;">
+        Done &rarr;
+      </button>
+    </div>
+  </div>
+</div>
 {% endblock %}
