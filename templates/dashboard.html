@@ -1,0 +1,401 @@
+{% extends "base.html" %}
+
+{% block title %}Studio Dashboard | {{ current_user.business_name if current_user else 'Krititva' }}{% endblock %}
+
+{% block content %}
+<section style="padding: var(--space-2xl) 0 var(--space-3xl); background: var(--color-paper-ivory);">
+  <div class="container">
+
+    {% if not current_user or current_user.role != 'vendor' %}
+    <div style="background: var(--color-cream-light); border: 1.5px dashed var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-3xl); text-align: center; max-width: 650px; margin: 0 auto;">
+      <div style="font-size: 3rem; margin-bottom: var(--space-sm);">🎨</div>
+      <h2 style="font-family: var(--font-editorial); font-size: 2rem; color: var(--color-deep-espresso); margin-bottom: var(--space-xs);">
+        Vendor Studio Hub
+      </h2>
+      <p style="color: var(--color-muted-text); margin-bottom: var(--space-lg); line-height: 1.6;">
+        You are currently viewing as a guest or client account. Switch to a vendor persona or log in to manage your activities, charges, and client reviews.
+      </p>
+      <div style="display: flex; gap: var(--space-sm); justify-content: center; flex-wrap: wrap;">
+        <form action="{{ url_for('auth_switch_demo') }}" method="POST" style="display: inline;">
+          <input type="hidden" name="username" value="maya-ceramics">
+          <button type="submit" class="btn-enterprise-signin">Try as Maya (Ceramics)</button>
+        </form>
+        <form action="{{ url_for('auth_switch_demo') }}" method="POST" style="display: inline;">
+          <input type="hidden" name="username" value="rohan-leather">
+          <button type="submit" class="btn-secondary">Try as Rohan (Leather)</button>
+        </form>
+        <a href="{{ url_for('auth_login') }}" class="btn-hand-drawn">Sign In / Sign Up</a>
+      </div>
+    </div>
+    {% else %}
+
+    <!-- Welcome & Storefront URL Banner -->
+    <div style="background: #ffffff; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-xl); margin-bottom: var(--space-xl); box-shadow: var(--shadow-subtle);">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-md);">
+        <div>
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+            <span class="meta-pill highlight">Studio Management Hub</span>
+            <span style="font-size: 0.85rem; color: var(--color-muted-text);">Signed in as <strong>{{ current_user.name }}</strong></span>
+          </div>
+          <h1 style="font-family: var(--font-editorial); font-size: 2.4rem; color: var(--color-deep-espresso); line-height: 1.15;">
+            {{ current_user.business_name }}
+          </h1>
+          <p style="color: var(--color-muted-text); font-size: 0.95rem; margin-top: 0.2rem;">
+            Your instant SaaS business profile is live. No code, no web hosting fees, pure direct patron reach.
+          </p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--space-xs); align-items: flex-end;">
+          <div style="display: flex; gap: var(--space-xs); align-items: center;">
+            <a href="{{ url_for('vendor_profile', username=current_user.username) }}" class="btn-hand-drawn" target="_blank">
+              View Public Storefront ↗
+            </a>
+            <button class="btn-enterprise-signin" onclick="openAddListingModal()" style="font-size: 0.9rem; padding: 0.65rem 1.3rem;">
+              + List New Activity
+            </button>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--color-muted-text); display: flex; align-items: center; gap: 0.35rem;">
+            <span>Shareable URL:</span>
+            <code style="background: var(--color-cream-light); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--color-soft-border); font-size: 0.8rem;">
+              /profile/{{ current_user.username }}
+            </code>
+            <button onclick="navigator.clipboard.writeText(window.location.origin + '/profile/{{ current_user.username }}'); alert('Storefront link copied!');" style="cursor: pointer; color: var(--color-terracotta); font-weight: 700;">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Counters -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-md); margin-top: var(--space-xl); padding-top: var(--space-lg); border-top: 1px dashed var(--color-soft-border);">
+        <div style="background: var(--color-cream-light); padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-soft-border); text-align: center;">
+          <div style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text); text-transform: uppercase;">Active Listings</div>
+          <div style="font-family: var(--font-editorial); font-size: 2.2rem; font-weight: 700; color: var(--color-deep-espresso);">
+            {{ vendor_data.activities|length }}
+          </div>
+          <div style="font-size: 0.75rem; color: #2e7d32;">● Ready for orders</div>
+        </div>
+
+        <div style="background: var(--color-cream-light); padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-soft-border); text-align: center;">
+          <div style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text); text-transform: uppercase;">Average Rating</div>
+          <div style="font-family: var(--font-editorial); font-size: 2.2rem; font-weight: 700; color: var(--color-terracotta);">
+            {{ "%.1f"|format(vendor_data.avg_rating) }} ★
+          </div>
+          <div style="font-size: 0.75rem; color: var(--color-muted-text);">From verified patrons</div>
+        </div>
+
+        <div style="background: var(--color-cream-light); padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-soft-border); text-align: center;">
+          <div style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text); text-transform: uppercase;">Client Reviews</div>
+          <div style="font-family: var(--font-editorial); font-size: 2.2rem; font-weight: 700; color: var(--color-deep-espresso);">
+            {{ vendor_data.reviews|length }}
+          </div>
+          <div style="font-size: 0.75rem; color: var(--color-muted-text);">100% genuine feedback</div>
+        </div>
+
+        <div style="background: var(--color-cream-light); padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-soft-border); text-align: center;">
+          <div style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text); text-transform: uppercase;">Customer Inquiries</div>
+          <div style="font-family: var(--font-editorial); font-size: 2.2rem; font-weight: 700; color: var(--color-burnished-copper);">
+            {{ inquiries|length }}
+          </div>
+          <div style="font-size: 0.75rem; color: #2e7d32;">Direct leads & commissions</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Management Sections: Listings & Inquiries -->
+    <div style="display: grid; grid-template-columns: 1fr; gap: var(--space-xl);">
+      
+      <!-- 1. My Listed Activities & Charges -->
+      <div style="background: #ffffff; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-xl);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+          <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso);">
+            My Listed Activities & Charges ({{ vendor_data.activities|length }})
+          </h2>
+          <button class="btn-secondary" onclick="openAddListingModal()" style="font-size: 0.88rem; padding: 0.5rem 1rem;">
+            + Add Activity
+          </button>
+        </div>
+
+        {% if vendor_data.activities|length == 0 %}
+        <p style="color: var(--color-muted-text); padding: var(--space-lg); text-align: center;">
+          No offerings currently listed. Add your first craft, workshop, or service with appropriate charges!
+        </p>
+        {% else %}
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem;">
+            <thead>
+              <tr style="border-bottom: 2px solid var(--color-soft-border); color: var(--color-muted-text); font-size: 0.82rem; text-transform: uppercase;">
+                <th style="padding: 0.75rem 0.5rem;">Activity / Craft</th>
+                <th style="padding: 0.75rem 0.5rem;">Category</th>
+                <th style="padding: 0.75rem 0.5rem;">Appropriate Charges</th>
+                <th style="padding: 0.75rem 0.5rem;">Turnaround</th>
+                <th style="padding: 0.75rem 0.5rem;">Status</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for act in vendor_data.activities %}
+              <tr style="border-bottom: 1px solid var(--color-border-subtle);">
+                <td style="padding: 0.85rem 0.5rem;">
+                  <strong style="color: var(--color-deep-espresso);">{{ act.title }}</strong>
+                  <div style="font-size: 0.78rem; color: var(--color-muted-text);">{{ act.type }}</div>
+                </td>
+                <td style="padding: 0.85rem 0.5rem; color: var(--color-muted-text);">{{ act.category }}</td>
+                <td style="padding: 0.85rem 0.5rem;">
+                  <span style="font-family: var(--font-editorial); font-weight: 700; color: var(--color-terracotta); font-size: 1.15rem;">
+                    {{ act.charges_display }}
+                  </span>
+                  <span style="font-size: 0.75rem; color: var(--color-muted-text);">({{ act.pricing_unit }})</span>
+                </td>
+                <td style="padding: 0.85rem 0.5rem; font-size: 0.85rem;">{{ act.turnaround }}</td>
+                <td style="padding: 0.85rem 0.5rem;">
+                  <span style="background: #e8f5e9; color: #2e7d32; font-weight: 700; font-size: 0.75rem; padding: 0.2rem 0.55rem; border-radius: var(--radius-pill);">
+                    {{ act.status }}
+                  </span>
+                </td>
+                <td style="padding: 0.85rem 0.5rem; text-align: right;">
+                  <a href="{{ url_for('vendor_profile', username=current_user.username) }}#{{ act.id }}" class="btn-hand-drawn" style="font-size: 0.8rem; padding: 0.35rem 0.8rem;">
+                    Preview
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- 2. Customer Inquiries & Commissions Received -->
+      <div style="background: #ffffff; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-xl);">
+        <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso); margin-bottom: var(--space-md);">
+          Customer Inquiries & Order Requests ({{ inquiries|length }})
+        </h2>
+
+        {% if inquiries|length == 0 %}
+        <p style="color: var(--color-muted-text); padding: var(--space-lg); text-align: center;">
+          No customer inquiries received yet. Share your storefront link on social media to start receiving direct orders!
+        </p>
+        {% else %}
+        <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+          {% for inq in inquiries %}
+          <div style="border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); padding: var(--space-md); background: var(--color-cream-light);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.35rem;">
+              <div>
+                <strong style="color: var(--color-deep-espresso); font-size: 1rem;">{{ inq.client_name }}</strong>
+                <span style="font-size: 0.8rem; color: var(--color-muted-text); margin-left: 0.5rem;">
+                  ✉ {{ inq.client_email }} &bull; 📞 {{ inq.client_phone }}
+                </span>
+              </div>
+              <span style="font-size: 0.75rem; background: var(--color-warm-cream); border: 1px solid var(--color-soft-border); padding: 0.15rem 0.5rem; border-radius: var(--radius-pill);">
+                {{ inq.date }}
+              </span>
+            </div>
+            <div style="font-size: 0.85rem; font-weight: 700; color: var(--color-terracotta); margin-bottom: 0.25rem;">
+              Interested In: {{ inq.activity_title }}
+            </div>
+            <p style="font-size: 0.9rem; color: var(--color-deep-espresso); line-height: 1.5;">
+              "{{ inq.message }}"
+            </p>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+    </div>
+
+    {% endif %}
+
+  </div>
+</section>
+
+<!-- Include Modal for Add Listing -->
+{% if current_user and current_user.role == 'vendor' %}
+<div id="modal-add-listing" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="listing-modal-title">
+  <div class="modal-dialog" style="background: #ffffff; border: 2px solid var(--color-burnished-copper); border-radius: var(--radius-md); max-width: 580px; width: 90%; padding: var(--space-xl); box-shadow: var(--shadow-elevated); max-height: 90vh; overflow-y: auto;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-soft-border); padding-bottom: var(--space-xs);">
+      <h3 id="listing-modal-title" style="font-family: var(--font-editorial); font-size: 1.6rem; color: var(--color-deep-espresso);">
+        List a New Business Activity or Craft
+      </h3>
+      <button type="button" class="btn-close-modal" onclick="closeAddListingModal()" aria-label="Close Modal" style="font-size: 1.5rem;">&times;</button>
+    </div>
+
+    <form id="form-create-listing" onsubmit="handleCreateListingSubmit(event)">
+      <div style="margin-bottom: var(--space-sm);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+          Activity / Craft / Service Title *
+        </label>
+        <input 
+          type="text" 
+          id="new-act-title" 
+          required 
+          placeholder="e.g. Hand-Carved Teakwood Serving Platter"
+          style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+        >
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+            Category *
+          </label>
+          <select 
+            id="new-act-category"
+            style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem; background: #ffffff;"
+          >
+            <option value="Handmade Crafts & Pottery">Handmade Crafts & Pottery</option>
+            <option value="Artisanal Leather & Goods">Artisanal Leather & Goods</option>
+            <option value="Boutique Gourmet & Baking">Boutique Gourmet & Baking</option>
+            <option value="Visual Arts & Brand Identity">Visual Arts & Brand Identity</option>
+            <option value="Tutoring & Workshops">Tutoring & Workshops</option>
+            <option value="Lifestyle & Photography">Lifestyle & Photography</option>
+          </select>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+            Offering Type *
+          </label>
+          <select 
+            id="new-act-type"
+            style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem; background: #ffffff;"
+          >
+            <option value="Handmade Craftable">Handmade Craftable</option>
+            <option value="Bespoke Craftable">Bespoke Craftable</option>
+            <option value="Fresh Artisan Bake">Fresh Artisan Bake</option>
+            <option value="Studio Experience / Workshop">Studio Experience / Workshop</option>
+            <option value="Creative Service">Creative Service</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+            Appropriate Charges Display (₹) *
+          </label>
+          <input 
+            type="text" 
+            id="new-act-charges-display" 
+            required 
+            placeholder="e.g. ₹1,450 or ₹800/hr"
+            style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+          >
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+            Pricing Unit / Model *
+          </label>
+          <input 
+            type="text" 
+            id="new-act-pricing-model" 
+            required 
+            placeholder="e.g. Per Piece / Per 2-Hr Session"
+            style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+          >
+        </div>
+      </div>
+
+      <div style="margin-bottom: var(--space-sm);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+          Turnaround / Delivery Timeline *
+        </label>
+        <input 
+          type="text" 
+          id="new-act-turnaround" 
+          required 
+          placeholder="e.g. Dispatched in 3-4 Days or Weekend Slots"
+          style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+        >
+      </div>
+
+      <div style="margin-bottom: var(--space-sm);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+          Description & Story *
+        </label>
+        <textarea 
+          id="new-act-description" 
+          rows="3" 
+          required 
+          placeholder="Describe materials used, dimensions, technique, and why it is special..."
+          style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+        ></textarea>
+      </div>
+
+      <div style="margin-bottom: var(--space-lg);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+          What's Included (1 per line)
+        </label>
+        <textarea 
+          id="new-act-inclusions" 
+          rows="3" 
+          placeholder="1x Handcrafted item&#10;Protective packaging&#10;Care instructions"
+          style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+        ></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-sm);">
+        <button type="button" class="btn-secondary" onclick="closeAddListingModal()">Cancel</button>
+        <button type="submit" class="btn-enterprise-signin" id="btn-save-new-listing">
+          Publish to Storefront
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function openAddListingModal() {
+    const modal = document.getElementById("modal-add-listing");
+    if (modal) modal.style.display = "flex";
+  }
+
+  function closeAddListingModal() {
+    const modal = document.getElementById("modal-add-listing");
+    if (modal) modal.style.display = "none";
+  }
+
+  async function handleCreateListingSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById("btn-save-new-listing");
+    btn.disabled = true;
+    btn.textContent = "Publishing Listing...";
+
+    const payload = {
+      vendor_username: "{{ current_user.username if current_user else '' }}",
+      title: document.getElementById("new-act-title").value.trim(),
+      category: document.getElementById("new-act-category").value,
+      type_name: document.getElementById("new-act-type").value,
+      charges_display: document.getElementById("new-act-charges-display").value.trim(),
+      pricing_model: document.getElementById("new-act-pricing-model").value.trim(),
+      turnaround: document.getElementById("new-act-turnaround").value.trim(),
+      description: document.getElementById("new-act-description").value.trim(),
+      inclusions: document.getElementById("new-act-inclusions").value.split("\n").filter(x => x.trim().length > 0)
+    };
+
+    try {
+      const resp = await fetch("/api/listings/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        alert(data.error || "Failed to create listing");
+        return;
+      }
+      closeAddListingModal();
+      alert("✨ Listing published! Reloading studio dashboard...");
+      window.location.reload();
+    } catch (err) {
+      alert("Error adding listing: " + err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Publish to Storefront";
+    }
+  }
+</script>
+{% endblock %}

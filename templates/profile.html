@@ -1,0 +1,959 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile.business_name }} ({{ profile.name }}) — Krititva Storefront{% endblock %}
+
+{% block content %}
+<!-- Botanical Line Background Accents -->
+<svg class="botanical-branch botanical-left" viewBox="0 0 100 200" fill="none" stroke="#B77A3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M20,180 C40,140 25,90 45,20" />
+  <path d="M35,130 C60,120 70,105 60,95 C48,88 38,105 35,115" />
+  <path d="M28,80 C50,70 65,55 52,48 C40,42 32,60 30,70" />
+  <circle cx="68" cy="98" r="2" fill="#AD4F32" />
+</svg>
+
+<svg class="botanical-branch botanical-right" viewBox="0 0 100 200" fill="none" stroke="#B77A3D" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M80,180 C60,140 75,90 55,20" />
+  <path d="M65,130 C40,120 30,105 40,95 C52,88 62,105 65,115" />
+  <circle cx="32" cy="98" r="2" fill="#AD4F32" />
+</svg>
+
+<!-- 1. VENDOR STOREFRONT HEADER -->
+<section class="storefront-header">
+  <div class="container">
+    
+    <!-- Top Breadcrumb & Share Trigger -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); flex-wrap: wrap; gap: var(--space-sm);">
+      <div style="font-size: 0.85rem; color: var(--color-muted-text); display: flex; align-items: center; gap: 0.4rem;">
+        <a href="{{ url_for('exchange') }}" style="color: var(--color-terracotta); font-weight: 600;">Storefronts</a>
+        <span>&rsaquo;</span>
+        <span>{{ profile.category }}</span>
+        <span>&rsaquo;</span>
+        <span style="font-weight: 700; color: var(--color-deep-espresso);">{{ profile.business_name }}</span>
+      </div>
+
+      <div style="display: flex; gap: var(--space-xs); align-items: center;">
+        <button class="btn-share-profile" id="btn-copy-storefront" onclick="copyStorefrontLink()">
+          <span>🔗 Share Storefront</span>
+        </button>
+        {% if current_user and current_user.username == profile.username %}
+        <button class="btn-enterprise-signin" id="btn-open-add-listing-top" onclick="openAddListingModal()" style="font-size: 0.88rem; padding: 0.55rem 1.1rem;">
+          + Add New Listing
+        </button>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Main Storefront Profile Banner -->
+    <div class="storefront-cover-banner">
+      <div class="storefront-profile-card">
+        <!-- Large Handcrafted Avatar -->
+        <div class="storefront-avatar-large">
+          {{ profile.avatar_initials }}
+          {% if profile.verified %}
+          <div class="storefront-verified-badge" title="Verified Homegrown Maker & Artisan">✓</div>
+          {% endif %}
+        </div>
+
+        <!-- Identity & Bio -->
+        <div class="storefront-identity">
+          <div class="storefront-biz-title">
+            <span>{{ profile.business_name }}</span>
+            <span style="font-family: var(--font-sans); font-size: 0.72rem; font-weight: 700; background: var(--color-warm-cream); color: var(--color-terracotta); border: 1px solid var(--color-soft-border); padding: 0.2rem 0.6rem; border-radius: var(--radius-pill);">
+              कृतित्व Verified
+            </span>
+          </div>
+
+          <div class="storefront-owner">
+            Curated & Handcrafted by <strong style="color: var(--color-deep-espresso);">{{ profile.name }}</strong> &bull; {{ profile.badge }}
+          </div>
+
+          <p class="storefront-tagline">
+            {{ profile.tagline }}
+          </p>
+
+          <div class="storefront-meta-pills">
+            <span class="meta-pill rating">
+              ★ {{ "%.1f"|format(profile.avg_rating) }} ({{ profile.reviews_count }} Verified Reviews)
+            </span>
+            <span class="meta-pill">
+              📍 {{ profile.location }}
+            </span>
+            <span class="meta-pill highlight">
+              ⚡ Replies in {{ profile.response_time }}
+            </span>
+            <span class="meta-pill">
+              🌱 Member since {{ profile.joined_date }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Creator Narrative & Contact Bar -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-xl); margin-top: var(--space-md);">
+      <div style="max-width: 680px;">
+        <h3 style="font-family: var(--font-editorial); font-size: 1.4rem; color: var(--color-deep-espresso); margin-bottom: 0.4rem;">
+          About The Studio & Craft
+        </h3>
+        <p style="color: var(--color-deep-espresso); font-size: 0.95rem; line-height: 1.6;">
+          {{ profile.bio }}
+        </p>
+      </div>
+
+      <!-- Quick Contact Actions -->
+      <div class="storefront-action-bar" style="margin-top: 0;">
+        {% if profile.whatsapp %}
+        <a href="https://wa.me/{{ profile.whatsapp|replace(' ', '')|replace('+', '')|replace('-', '') }}?text=Hello%20{{ profile.name }},%20I%20found%20your%20storefront%20on%20Krititva!" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+          <span>💬 Chat on WhatsApp</span>
+        </a>
+        {% endif %}
+
+        <button class="btn-secondary" onclick="openInquiryModal('', '{{ profile.name }}')" style="font-size: 0.9rem; padding: 0.65rem 1.3rem;">
+          ✉ Contact / Custom Commission
+        </button>
+
+        {% if profile.instagram %}
+        <a href="https://instagram.com/{{ profile.instagram|replace('@', '') }}" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 0.88rem; padding: 0.65rem 1.1rem; border-style: dashed;">
+          📷 {{ profile.instagram }}
+        </a>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 2. ACTIVITIES & BUSINESS OFFERINGS CATALOG -->
+<section style="padding: var(--space-2xl) 0 var(--space-xl);">
+  <div class="container">
+    
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: var(--space-md); margin-bottom: var(--space-lg);">
+      <div>
+        <span class="section-tag">Direct Catalog & Offerings</span>
+        <h2 style="font-family: var(--font-editorial); font-size: 2.2rem; color: var(--color-deep-espresso); line-height: 1.15;">
+          Listed Activities & Craftables ({{ profile.activities_count }})
+        </h2>
+        <p style="color: var(--color-muted-text); font-size: 0.95rem; margin-top: 0.2rem;">
+          Transparent charges, clear turnaround schedules, and direct booking without third-party commission markups.
+        </p>
+      </div>
+
+      {% if current_user and current_user.username == profile.username %}
+      <button class="btn-enterprise-signin" onclick="openAddListingModal()" style="font-size: 0.92rem; padding: 0.7rem 1.4rem;">
+        + List Another Activity / Item
+      </button>
+      {% endif %}
+    </div>
+
+    {% if profile.activities|length == 0 %}
+    <div style="background: var(--color-cream-light); border: 1.5px dashed var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-2xl); text-align: center;">
+      <h3 style="font-family: var(--font-editorial); font-size: 1.4rem; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">
+        No activities listed yet
+      </h3>
+      <p style="color: var(--color-muted-text); margin-bottom: var(--space-md);">
+        This creator is currently updating their seasonal collection.
+      </p>
+      {% if current_user and current_user.username == profile.username %}
+      <button class="btn-enterprise-signin" onclick="openAddListingModal()">+ Add Your First Listing</button>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Grid of Activities / Products with Appropriate Charges -->
+    <div class="activity-catalog-grid" id="activities-container">
+      {% for act in profile.activities %}
+      <article class="activity-card" id="{{ act.id }}">
+        <div>
+          <div class="activity-header-top">
+            <span class="activity-type-pill">{{ act.type }}</span>
+            <span style="font-size: 1.4rem;" aria-hidden="true">{{ act.theme_icon or '✨' }}</span>
+          </div>
+
+          <h3 style="font-family: var(--font-editorial); font-size: 1.45rem; color: var(--color-deep-espresso); margin-bottom: var(--space-xs); line-height: 1.25;">
+            {{ act.title }}
+          </h3>
+
+          <!-- Charges Banner -->
+          <div class="activity-charges-banner">
+            <div>
+              <div class="activity-price">{{ act.charges_display }}</div>
+              <div class="activity-price-unit">{{ act.pricing_unit }}</div>
+            </div>
+            <div style="font-size: 0.78rem; font-weight: 700; color: #2e7d32; background: #e8f5e9; padding: 0.2rem 0.55rem; border-radius: var(--radius-pill);">
+              {{ act.turnaround }}
+            </div>
+          </div>
+
+          <p style="font-size: 0.9rem; color: var(--color-deep-espresso); line-height: 1.5; margin-bottom: var(--space-sm);">
+            {{ act.description }}
+          </p>
+
+          <!-- Inclusions List -->
+          {% if act.inclusions %}
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--color-muted-text); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.2rem;">
+            What's Included:
+          </div>
+          <ul class="activity-inclusions-list">
+            {% for item in act.inclusions %}
+            <li class="activity-inclusion-item">{{ item }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+
+        <div style="margin-top: var(--space-md); padding-top: var(--space-sm); border-top: 1px dashed var(--color-soft-border); display: flex; justify-content: space-between; align-items: center; gap: var(--space-xs);">
+          <span style="font-size: 0.78rem; color: var(--color-muted-text);">
+            ★ {{ "%.1f"|format(act.rating) }} ({{ act.order_count }} fulfilled)
+          </span>
+          <button class="btn-hand-drawn" onclick="openInquiryModal('{{ act.title }}', '{{ profile.name }}')" style="font-size: 0.85rem; padding: 0.45rem 1rem;">
+            Order / Inquire &rarr;
+          </button>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+<!-- 3. INTERACTIVE REVIEWS & RATING SYSTEM -->
+<section class="reviews-hub-container" id="reviews-section">
+  <div class="container">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); margin-bottom: var(--space-lg);">
+      <div>
+        <span class="section-tag">Client Trust & Bilateral Feedback</span>
+        <h2 style="font-family: var(--font-editorial); font-size: 2.2rem; color: var(--color-deep-espresso);">
+          Client Reviews & Ratings
+        </h2>
+        <p style="color: var(--color-muted-text); font-size: 0.95rem;">
+          Genuine feedback from patrons and clients who booked activities or ordered items.
+        </p>
+      </div>
+
+      <!-- Action to Rate & Post Review -->
+      <button class="btn-enterprise-signin" id="btn-open-review-modal" onclick="openReviewModal()" style="font-size: 0.95rem; padding: 0.75rem 1.6rem;">
+        ★ Write a Review & Rate
+      </button>
+    </div>
+
+    <!-- Rating Overview Grid with Star Distribution -->
+    <div class="rating-overview-grid">
+      <!-- Big Score -->
+      <div class="rating-big-score">
+        <div class="rating-number" id="display-avg-rating">{{ "%.1f"|format(profile.avg_rating) }}</div>
+        <div class="rating-stars-gold" id="display-star-icons" aria-label="{{ profile.avg_rating }} out of 5 stars">
+          ★★★★★
+        </div>
+        <div style="font-size: 0.85rem; font-weight: 600; color: var(--color-muted-text);" id="display-review-count">
+          Based on {{ profile.reviews_count }} verified reviews
+        </div>
+      </div>
+
+      <!-- Star Distribution Bars -->
+      <div>
+        <div style="font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: var(--space-xs);">
+          Rating Breakdown
+        </div>
+        {% for star in [5, 4, 3, 2, 1] %}
+        {% set count = profile.star_breakdown[star] %}
+        {% set percent = (count / profile.reviews_count * 100) if profile.reviews_count > 0 else 0 %}
+        <div class="rating-bar-row">
+          <span style="width: 28px; font-weight: 600;">{{ star }} ★</span>
+          <div class="rating-progress-track">
+            <div class="rating-progress-fill" style="width: {{ percent }}%;"></div>
+          </div>
+          <span style="width: 24px; text-align: right;">{{ count }}</span>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Guarantee Badge -->
+      <div style="text-align: center; border-left: 1px dashed var(--color-soft-border); padding-left: var(--space-lg);">
+        <div style="font-size: 2.2rem; margin-bottom: 0.25rem;">🛡</div>
+        <div style="font-weight: 700; font-size: 0.9rem; color: var(--color-deep-espresso);">Krititva Verified</div>
+        <div style="font-size: 0.78rem; color: var(--color-muted-text); max-width: 140px; margin: 0 auto;">
+          Real reviews tied to verified client interactions.
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews Cards List -->
+    <div class="review-cards-list" id="reviews-list">
+      {% if profile.reviews|length == 0 %}
+      <div style="background: var(--color-cream-light); border: 1.5px dashed var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-xl); text-align: center;" id="empty-reviews-placeholder">
+        <p style="color: var(--color-muted-text);">No client reviews yet. Be the first to share your experience!</p>
+        <button class="btn-hand-drawn" onclick="openReviewModal()" style="margin-top: var(--space-sm);">
+          Leave First Review &rarr;
+        </button>
+      </div>
+      {% endif %}
+
+      {% for rev in profile.reviews %}
+      <article class="review-card" id="{{ rev.id }}">
+        <div class="review-card-header">
+          <div class="review-author-info">
+            <div class="review-author-avatar">{{ rev.client_avatar }}</div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <strong style="color: var(--color-deep-espresso); font-size: 0.95rem;">{{ rev.client_name }}</strong>
+                {% if rev.verified_buyer %}
+                <span style="font-size: 0.72rem; font-weight: 700; background: #e8f5e9; color: #2e7d32; padding: 0.15rem 0.5rem; border-radius: var(--radius-pill);">
+                  ✓ Verified Client
+                </span>
+                {% endif %}
+              </div>
+              <div style="font-size: 0.78rem; color: var(--color-muted-text);">
+                {{ rev.date }} &bull; Experience: <em>{{ rev.activity_title }}</em>
+              </div>
+            </div>
+          </div>
+
+          <div style="color: #F59E0B; font-size: 1.1rem; letter-spacing: 1px;">
+            {% for _ in range(rev.rating) %}★{% endfor %}
+          </div>
+        </div>
+
+        <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.35rem;">
+          {{ rev.review_title }}
+        </h4>
+        <p style="font-size: 0.92rem; color: var(--color-deep-espresso); line-height: 1.55;">
+          {{ rev.comment }}
+        </p>
+      </article>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================================
+     MODAL 1: WRITE A REVIEW & RATE VENDOR
+     ========================================================================= -->
+<div id="modal-review" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+  <div class="modal-dialog" style="background: #ffffff; border: 2px solid var(--color-burnished-copper); border-radius: var(--radius-md); max-width: 540px; width: 90%; padding: var(--space-xl); box-shadow: var(--shadow-elevated); max-height: 90vh; overflow-y: auto;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-soft-border); padding-bottom: var(--space-xs);">
+      <h3 id="review-modal-title" style="font-family: var(--font-editorial); font-size: 1.6rem; color: var(--color-deep-espresso);">
+        Rate & Review {{ profile.business_name }}
+      </h3>
+      <button type="button" class="btn-close-modal" onclick="closeReviewModal()" aria-label="Close Modal" style="font-size: 1.5rem;">&times;</button>
+    </div>
+
+    <form id="form-submit-review" onsubmit="handleReviewSubmit(event)">
+      <!-- Interactive Star Rating Input -->
+      <div style="margin-bottom: var(--space-md); text-align: center; background: var(--color-cream-light); padding: var(--space-md); border-radius: var(--radius-sm); border: 1px solid var(--color-soft-border);">
+        <label style="display: block; font-size: 0.88rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.35rem;">
+          Your Star Rating (Click to select)
+        </label>
+        <div class="star-rating-input" id="star-selector" data-rating="5">
+          <span class="star-btn active" data-val="1">★</span>
+          <span class="star-btn active" data-val="2">★</span>
+          <span class="star-btn active" data-val="3">★</span>
+          <span class="star-btn active" data-val="4">★</span>
+          <span class="star-btn active" data-val="5">★</span>
+        </div>
+        <div id="star-rating-label" style="font-size: 0.82rem; font-weight: 600; color: var(--color-terracotta); margin-top: 0.25rem;">
+          5 Stars — Outstanding Artisanal Quality!
+        </div>
+      </div>
+
+      <!-- Client Name -->
+      <div style="margin-bottom: var(--space-md);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.3rem;">
+          Your Name / Handle *
+        </label>
+        <input 
+          type="text" 
+          id="review-client-name" 
+          required 
+          value="{% if current_user %}{{ current_user.name }}{% endif %}" 
+          placeholder="e.g. Priya Sharma"
+          style="width: 100%; padding: 0.7rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-sans);"
+        >
+      </div>
+
+      <!-- Activity / Offering Availed -->
+      <div style="margin-bottom: var(--space-md);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.3rem;">
+          Activity / Craft Availed
+        </label>
+        <select 
+          id="review-activity-title"
+          style="width: 100%; padding: 0.7rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-sans); background: #ffffff;"
+        >
+          {% for act in profile.activities %}
+          <option value="{{ act.title }}">{{ act.title }} ({{ act.charges_display }})</option>
+          {% endfor %}
+          <option value="Custom Order / Commission">Custom Order / Commission</option>
+          <option value="General Studio Experience">General Studio Experience</option>
+        </select>
+      </div>
+
+      <!-- Review Headline -->
+      <div style="margin-bottom: var(--space-md);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.3rem;">
+          Review Headline *
+        </label>
+        <input 
+          type="text" 
+          id="review-title" 
+          required 
+          placeholder="e.g. Exceptional attention to detail and packaging"
+          style="width: 100%; padding: 0.7rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-sans);"
+        >
+      </div>
+
+      <!-- Feedback Comments -->
+      <div style="margin-bottom: var(--space-lg);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.3rem;">
+          Detailed Feedback & Experience *
+        </label>
+        <textarea 
+          id="review-comment" 
+          rows="4" 
+          required 
+          placeholder="Describe the craft quality, turnaround time, communication, and how it met your expectations..."
+          style="width: 100%; padding: 0.7rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-sans);"
+        ></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-sm);">
+        <button type="button" class="btn-secondary" onclick="closeReviewModal()">Cancel</button>
+        <button type="submit" class="btn-enterprise-signin" id="btn-submit-review-action">
+          Publish Review & Rating
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- =========================================================================
+     MODAL 2: INQUIRE / COMMISSION / ORDER
+     ========================================================================= -->
+<div id="modal-inquiry" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="inquiry-modal-title">
+  <div class="modal-dialog" style="background: #ffffff; border: 2px solid var(--color-burnished-copper); border-radius: var(--radius-md); max-width: 520px; width: 90%; padding: var(--space-xl); box-shadow: var(--shadow-elevated);">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-soft-border); padding-bottom: var(--space-xs);">
+      <h3 id="inquiry-modal-title" style="font-family: var(--font-editorial); font-size: 1.6rem; color: var(--color-deep-espresso);">
+        Direct Inquire / Order
+      </h3>
+      <button type="button" class="btn-close-modal" onclick="closeInquiryModal()" aria-label="Close Modal" style="font-size: 1.5rem;">&times;</button>
+    </div>
+
+    <form id="form-inquiry" onsubmit="handleInquirySubmit(event)">
+      <div style="margin-bottom: var(--space-sm);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+          Item or Service Interested In
+        </label>
+        <input 
+          type="text" 
+          id="inquiry-activity-title" 
+          readonly 
+          style="width: 100%; padding: 0.65rem; background: var(--color-cream-light); border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem; font-weight: 600; color: var(--color-deep-espresso);"
+        >
+      </div>
+
+      <div style="margin-bottom: var(--space-sm);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+          Your Full Name *
+        </label>
+        <input 
+          type="text" 
+          id="inquiry-client-name" 
+          required 
+          value="{% if current_user %}{{ current_user.name }}{% endif %}"
+          placeholder="e.g. Radhika Menon"
+          style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+        >
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+            Email Address *
+          </label>
+          <input 
+            type="email" 
+            id="inquiry-client-email" 
+            required 
+            value="{% if current_user %}{{ current_user.email }}{% endif %}"
+            placeholder="radhika@gmail.com"
+            style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+          >
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+            Phone / WhatsApp *
+          </label>
+          <input 
+            type="tel" 
+            id="inquiry-client-phone" 
+            required 
+            placeholder="+91 98000 00000"
+            style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+          >
+        </div>
+      </div>
+
+      <div style="margin-bottom: var(--space-lg);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+          Customization Notes / Quantity / Dates *
+        </label>
+        <textarea 
+          id="inquiry-message" 
+          rows="3" 
+          required 
+          placeholder="Tell the maker about quantities, preferred dates, customized initials, or delivery requirements..."
+          style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+        ></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-sm);">
+        <button type="button" class="btn-secondary" onclick="closeInquiryModal()">Cancel</button>
+        <button type="submit" class="btn-enterprise-signin" id="btn-send-inquiry">
+          Send Direct Inquiry
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<!-- =========================================================================
+     MODAL 3: ADD NEW LISTING WITH CHARGES (FOR VENDOR)
+     ========================================================================= -->
+{% if current_user and current_user.username == profile.username %}
+<div id="modal-add-listing" class="modal-backdrop" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="listing-modal-title">
+  <div class="modal-dialog" style="background: #ffffff; border: 2px solid var(--color-burnished-copper); border-radius: var(--radius-md); max-width: 580px; width: 90%; padding: var(--space-xl); box-shadow: var(--shadow-elevated); max-height: 90vh; overflow-y: auto;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-soft-border); padding-bottom: var(--space-xs);">
+      <h3 id="listing-modal-title" style="font-family: var(--font-editorial); font-size: 1.6rem; color: var(--color-deep-espresso);">
+        List a New Business Activity or Craft
+      </h3>
+      <button type="button" class="btn-close-modal" onclick="closeAddListingModal()" aria-label="Close Modal" style="font-size: 1.5rem;">&times;</button>
+    </div>
+
+    <form id="form-create-listing" onsubmit="handleCreateListingSubmit(event)">
+      <!-- Title -->
+      <div style="margin-bottom: var(--space-sm);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+          Activity / Craft / Service Title *
+        </label>
+        <input 
+          type="text" 
+          id="new-act-title" 
+          required 
+          placeholder="e.g. Hand-Carved Teakwood Serving Platter"
+          style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+        >
+      </div>
+
+      <!-- Category & Type -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+            Category *
+          </label>
+          <select 
+            id="new-act-category"
+            style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem; background: #ffffff;"
+          >
+            <option value="Handmade Crafts & Pottery">Handmade Crafts & Pottery</option>
+            <option value="Artisanal Leather & Goods">Artisanal Leather & Goods</option>
+            <option value="Boutique Gourmet & Baking">Boutique Gourmet & Baking</option>
+            <option value="Visual Arts & Brand Identity">Visual Arts & Brand Identity</option>
+            <option value="Tutoring & Workshops">Tutoring & Workshops</option>
+            <option value="Lifestyle & Photography">Lifestyle & Photography</option>
+          </select>
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+            Offering Type *
+          </label>
+          <select 
+            id="new-act-type"
+            style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem; background: #ffffff;"
+          >
+            <option value="Handmade Craftable">Handmade Craftable</option>
+            <option value="Bespoke Craftable">Bespoke Craftable</option>
+            <option value="Fresh Artisan Bake">Fresh Artisan Bake</option>
+            <option value="Studio Experience / Workshop">Studio Experience / Workshop</option>
+            <option value="Creative Service">Creative Service</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Charges & Pricing Model -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+            Appropriate Charges Display (₹) *
+          </label>
+          <input 
+            type="text" 
+            id="new-act-charges-display" 
+            required 
+            placeholder="e.g. ₹1,450 or ₹800/hr"
+            style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+          >
+        </div>
+        <div>
+          <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+            Pricing Unit / Model *
+          </label>
+          <input 
+            type="text" 
+            id="new-act-pricing-model" 
+            required 
+            placeholder="e.g. Per Piece / Per 2-Hr Session"
+            style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+          >
+        </div>
+      </div>
+
+      <!-- Turnaround Time -->
+      <div style="margin-bottom: var(--space-sm);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+          Turnaround / Delivery Timeline *
+        </label>
+        <input 
+          type="text" 
+          id="new-act-turnaround" 
+          required 
+          placeholder="e.g. Dispatched in 3-4 Days or Weekend Slots"
+          style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+        >
+      </div>
+
+      <!-- Description -->
+      <div style="margin-bottom: var(--space-sm);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+          Description & Story *
+        </label>
+        <textarea 
+          id="new-act-description" 
+          rows="3" 
+          required 
+          placeholder="Describe materials used, dimensions, technique, and why it is special..."
+          style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+        ></textarea>
+      </div>
+
+      <!-- Inclusions -->
+      <div style="margin-bottom: var(--space-lg);">
+        <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+          What's Included (1 per line)
+        </label>
+        <textarea 
+          id="new-act-inclusions" 
+          rows="3" 
+          placeholder="1x Handcrafted serving platter&#10;Food-grade beeswax polish&#10;Gift packaging"
+          style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+        ></textarea>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-sm);">
+        <button type="button" class="btn-secondary" onclick="closeAddListingModal()">Cancel</button>
+        <button type="submit" class="btn-enterprise-signin" id="btn-save-new-listing">
+          Publish to Storefront
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endif %}
+
+<!-- Dynamic Toast Notification Container -->
+<div id="toast-box" class="toast-notification" style="display: none;">
+  <span id="toast-message">Storefront Link Copied!</span>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Vendor handle
+  const CURRENT_VENDOR_USERNAME = "{{ profile.username }}";
+
+  // Share / Copy Storefront URL
+  function copyStorefrontLink() {
+    const fullUrl = window.location.origin + "/profile/" + CURRENT_VENDOR_USERNAME;
+    navigator.clipboard.writeText(fullUrl).then(() => {
+      showToast("✓ Storefront URL copied to clipboard! Share on WhatsApp & Instagram");
+    }).catch(() => {
+      showToast("Storefront URL: " + fullUrl);
+    });
+  }
+
+  function showToast(msg) {
+    const box = document.getElementById("toast-box");
+    const msgEl = document.getElementById("toast-message");
+    if (!box || !msgEl) return;
+    msgEl.textContent = msg;
+    box.style.display = "flex";
+    setTimeout(() => {
+      box.style.display = "none";
+    }, 4000);
+  }
+
+  // Review Modal Handlers
+  function openReviewModal() {
+    document.getElementById("modal-review").style.display = "flex";
+  }
+
+  function closeReviewModal() {
+    document.getElementById("modal-review").style.display = "none";
+  }
+
+  // Inquiry Modal Handlers
+  function openInquiryModal(activityTitle, vendorName) {
+    const modal = document.getElementById("modal-inquiry");
+    const titleInput = document.getElementById("inquiry-activity-title");
+    if (titleInput) {
+      titleInput.value = activityTitle || "General Custom Commission / Inquiry";
+    }
+    modal.style.display = "flex";
+  }
+
+  function closeInquiryModal() {
+    document.getElementById("modal-inquiry").style.display = "none";
+  }
+
+  // Add Listing Modal Handlers
+  function openAddListingModal() {
+    const modal = document.getElementById("modal-add-listing");
+    if (modal) modal.style.display = "flex";
+  }
+
+  function closeAddListingModal() {
+    const modal = document.getElementById("modal-add-listing");
+    if (modal) modal.style.display = "none";
+  }
+
+  // Interactive 5-Star Selector Logic
+  const starBtns = document.querySelectorAll("#star-selector .star-btn");
+  const starContainer = document.getElementById("star-selector");
+  const starRatingLabel = document.getElementById("star-rating-label");
+
+  const ratingDescriptions = {
+    1: "1 Star — Poor experience",
+    2: "2 Stars — Needs improvement",
+    3: "3 Stars — Satisfactory",
+    4: "4 Stars — Very good craftsmanship",
+    5: "5 Stars — Outstanding Artisanal Quality!"
+  };
+
+  starBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const val = parseInt(btn.getAttribute("data-val"));
+      starContainer.setAttribute("data-rating", val);
+      updateStarsUI(val);
+      if (starRatingLabel) {
+        starRatingLabel.textContent = ratingDescriptions[val] || `${val} Stars`;
+      }
+    });
+
+    btn.addEventListener("mouseover", () => {
+      const val = parseInt(btn.getAttribute("data-val"));
+      highlightStars(val);
+    });
+  });
+
+  if (starContainer) {
+    starContainer.addEventListener("mouseleave", () => {
+      const currentVal = parseInt(starContainer.getAttribute("data-rating") || 5);
+      updateStarsUI(currentVal);
+    });
+  }
+
+  function highlightStars(val) {
+    starBtns.forEach(b => {
+      const starVal = parseInt(b.getAttribute("data-val"));
+      b.classList.toggle("hover", starVal <= val);
+    });
+  }
+
+  function updateStarsUI(val) {
+    starBtns.forEach(b => {
+      const starVal = parseInt(b.getAttribute("data-val"));
+      b.classList.toggle("active", starVal <= val);
+      b.classList.remove("hover");
+    });
+  }
+
+  // Review Form Submission (AJAX)
+  async function handleReviewSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById("btn-submit-review-action");
+    btn.disabled = true;
+    btn.textContent = "Publishing Review...";
+
+    const ratingVal = parseInt(starContainer.getAttribute("data-rating") || 5);
+    const clientName = document.getElementById("review-client-name").value.trim();
+    const activityTitle = document.getElementById("review-activity-title").value;
+    const reviewTitle = document.getElementById("review-title").value.trim();
+    const comment = document.getElementById("review-comment").value.trim();
+
+    try {
+      const resp = await fetch(`/api/vendors/${CURRENT_VENDOR_USERNAME}/review`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          client_name: clientName,
+          rating: ratingVal,
+          activity_title: activityTitle,
+          review_title: reviewTitle,
+          comment: comment
+        })
+      });
+
+      const res = await resp.json();
+      if (!resp.ok) {
+        alert(res.error || "Failed to submit review");
+        btn.disabled = false;
+        btn.textContent = "Publish Review & Rating";
+        return;
+      }
+
+      // Update UI Live
+      const newRev = res.review;
+      const reviewsList = document.getElementById("reviews-list");
+      const emptyPlaceholder = document.getElementById("empty-reviews-placeholder");
+      if (emptyPlaceholder) emptyPlaceholder.remove();
+
+      let starString = "★".repeat(newRev.rating);
+      const article = document.createElement("article");
+      article.className = "review-card";
+      article.style.animation = "modalSlideUp 0.4s ease";
+      article.innerHTML = `
+        <div class="review-card-header">
+          <div class="review-author-info">
+            <div class="review-author-avatar">${newRev.client_avatar}</div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <strong style="color: var(--color-deep-espresso); font-size: 0.95rem;">${newRev.client_name}</strong>
+                <span style="font-size: 0.72rem; font-weight: 700; background: #e8f5e9; color: #2e7d32; padding: 0.15rem 0.5rem; border-radius: var(--radius-pill);">
+                  ✓ Verified Client
+                </span>
+              </div>
+              <div style="font-size: 0.78rem; color: var(--color-muted-text);">
+                ${newRev.date} &bull; Experience: <em>${newRev.activity_title}</em>
+              </div>
+            </div>
+          </div>
+          <div style="color: #F59E0B; font-size: 1.1rem; letter-spacing: 1px;">
+            ${starString}
+          </div>
+        </div>
+        <h4 style="font-size: 1.05rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.35rem;">
+          ${newRev.review_title}
+        </h4>
+        <p style="font-size: 0.92rem; color: var(--color-deep-espresso); line-height: 1.55;">
+          ${newRev.comment}
+        </p>
+      `;
+
+      reviewsList.prepend(article);
+
+      // Update Score in UI
+      const avgEl = document.getElementById("display-avg-rating");
+      if (avgEl) avgEl.textContent = res.new_avg_rating.toFixed(1);
+      const countEl = document.getElementById("display-review-count");
+      if (countEl) countEl.textContent = `Based on ${res.total_reviews} verified reviews`;
+
+      closeReviewModal();
+      showToast("★ Thank you! Your review has been published to this storefront.");
+      document.getElementById("form-submit-review").reset();
+    } catch (err) {
+      alert("Network error publishing review: " + err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Publish Review & Rating";
+    }
+  }
+
+  // Inquiry Form Submission (AJAX)
+  async function handleInquirySubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById("btn-send-inquiry");
+    btn.disabled = true;
+    btn.textContent = "Sending Inquiry...";
+
+    const payload = {
+      vendor_username: CURRENT_VENDOR_USERNAME,
+      activity_title: document.getElementById("inquiry-activity-title").value,
+      client_name: document.getElementById("inquiry-client-name").value.trim(),
+      client_email: document.getElementById("inquiry-client-email").value.trim(),
+      client_phone: document.getElementById("inquiry-client-phone").value.trim(),
+      message: document.getElementById("inquiry-message").value.trim()
+    };
+
+    try {
+      const resp = await fetch("/api/inquire", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        alert(data.error || "Failed to submit inquiry");
+        return;
+      }
+      closeInquiryModal();
+      showToast("✓ Inquiry sent directly to creator! They reply within " + "{{ profile.response_time }}");
+      document.getElementById("form-inquiry").reset();
+    } catch (err) {
+      alert("Error submitting inquiry: " + err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Send Direct Inquiry";
+    }
+  }
+
+  // Create Listing Form Submission (AJAX)
+  async function handleCreateListingSubmit(e) {
+    e.preventDefault();
+    const btn = document.getElementById("btn-save-new-listing");
+    btn.disabled = true;
+    btn.textContent = "Publishing Listing...";
+
+    const payload = {
+      vendor_username: CURRENT_VENDOR_USERNAME,
+      title: document.getElementById("new-act-title").value.trim(),
+      category: document.getElementById("new-act-category").value,
+      type_name: document.getElementById("new-act-type").value,
+      charges_display: document.getElementById("new-act-charges-display").value.trim(),
+      pricing_model: document.getElementById("new-act-pricing-model").value.trim(),
+      turnaround: document.getElementById("new-act-turnaround").value.trim(),
+      description: document.getElementById("new-act-description").value.trim(),
+      inclusions: document.getElementById("new-act-inclusions").value.split("\n").filter(x => x.trim().length > 0)
+    };
+
+    try {
+      const resp = await fetch("/api/listings/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        alert(data.error || "Failed to create listing");
+        return;
+      }
+      closeAddListingModal();
+      showToast("✨ New activity published successfully to your storefront!");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (err) {
+      alert("Error adding listing: " + err);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Publish to Storefront";
+    }
+  }
+</script>
+{% endblock %}

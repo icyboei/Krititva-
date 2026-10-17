@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In & Register | Krititva SaaS Storefront Platform{% endblock %}
+
+{% block content %}
+<section style="padding: var(--space-3xl) 0 var(--space-3xl); background: var(--color-paper-ivory); min-height: 80vh; display: flex; align-items: center;">
+  <div class="container" style="max-width: 600px;">
+    
+    <!-- Brand Crest & Header -->
+    <div style="text-align: center; margin-bottom: var(--space-xl);">
+      <div class="brand-emblem-wrapper" style="width: 64px; height: 64px; margin: 0 auto var(--space-sm);">
+        <img src="{{ url_for('static', filename='images/krititva-emblem.jpg') }}" alt="Krititva Emblem" class="brand-emblem-img">
+      </div>
+      <h1 style="font-family: var(--font-editorial); font-size: 2.4rem; color: var(--color-deep-espresso); margin-bottom: var(--space-2xs);">
+        Welcome to Krititva
+      </h1>
+      <p style="color: var(--color-muted-text); font-size: 1rem;">
+        Your turnkey micro-storefront platform. Start listing activities in 60 seconds without building a website from scratch.
+      </p>
+    </div>
+
+    <!-- Error/Flash message display -->
+    {% if error %}
+    <div style="background: #ffebee; border: 1.5px solid #ef5350; color: #c62828; padding: var(--space-sm) var(--space-md); border-radius: var(--radius-sm); margin-bottom: var(--space-lg); font-size: 0.92rem;">
+      ⚠ {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Auth Card -->
+    <div style="background: #ffffff; border: 2px solid var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-2xl); box-shadow: var(--shadow-elevated);">
+      
+      <!-- Tab Switcher (Login vs Sign Up) -->
+      <div style="display: flex; border-bottom: 2px solid var(--color-soft-border); margin-bottom: var(--space-xl);">
+        <button 
+          id="tab-login-btn" 
+          onclick="switchAuthTab('login')" 
+          style="flex: 1; padding: 0.75rem 0; font-family: var(--font-editorial); font-size: 1.25rem; font-weight: 700; color: {% if mode == 'signup' %}var(--color-muted-text){% else %}var(--color-terracotta){% endif %}; border-bottom: 3px solid {% if mode == 'signup' %}transparent{% else %}var(--color-terracotta){% endif %}; transition: all var(--transition-fast);"
+        >
+          Sign In
+        </button>
+        <button 
+          id="tab-signup-btn" 
+          onclick="switchAuthTab('signup')" 
+          style="flex: 1; padding: 0.75rem 0; font-family: var(--font-editorial); font-size: 1.25rem; font-weight: 700; color: {% if mode == 'signup' %}var(--color-terracotta){% else %}var(--color-muted-text){% endif %}; border-bottom: 3px solid {% if mode == 'signup' %}var(--color-terracotta){% else %}transparent{% endif %}; transition: all var(--transition-fast);"
+        >
+          Create Storefront (Sign Up)
+        </button>
+      </div>
+
+      <!-- 1. LOGIN FORM -->
+      <div id="auth-login-section" style="display: {% if mode == 'signup' %}none{% else %}block{% endif %};">
+        <form action="{{ url_for('auth_login') }}" method="POST">
+          <div style="margin-bottom: var(--space-md);">
+            <label style="display: block; font-size: 0.88rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.35rem;">
+              Username or Email *
+            </label>
+            <input 
+              type="text" 
+              name="identifier" 
+              required 
+              placeholder="e.g. maya-ceramics or maya@mitticlay.com"
+              style="width: 100%; padding: 0.75rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-sans);"
+            >
+          </div>
+
+          <div style="margin-bottom: var(--space-lg);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+              <label style="font-size: 0.88rem; font-weight: 700; color: var(--color-deep-espresso);">
+                Password *
+              </label>
+              <span style="font-size: 0.8rem; color: var(--color-muted-text);">Default demo pass: <code>password123</code></span>
+            </div>
+            <input 
+              type="password" 
+              name="password" 
+              required 
+              placeholder="••••••••"
+              style="width: 100%; padding: 0.75rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.95rem; font-family: var(--font-sans);"
+            >
+          </div>
+
+          <button type="submit" class="btn-enterprise-signin" style="width: 100%; padding: 0.85rem; font-size: 1rem; text-align: center; justify-content: center;">
+            Sign In to Your Account &rarr;
+          </button>
+        </form>
+
+        <!-- Quick 1-Click Demo Accounts -->
+        <div style="margin-top: var(--space-xl); padding-top: var(--space-lg); border-top: 1px dashed var(--color-soft-border);">
+          <div style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text); text-transform: uppercase; margin-bottom: var(--space-sm); text-align: center;">
+            Instant 1-Click Demo Personas
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-xs);">
+            <form action="{{ url_for('auth_switch_demo') }}" method="POST">
+              <input type="hidden" name="username" value="maya-ceramics">
+              <button type="submit" class="persona-btn" style="width: 100%; justify-content: center;">
+                🏺 Maya (Ceramics)
+              </button>
+            </form>
+            <form action="{{ url_for('auth_switch_demo') }}" method="POST">
+              <input type="hidden" name="username" value="rohan-leather">
+              <button type="submit" class="persona-btn" style="width: 100%; justify-content: center;">
+                👜 Rohan (Leather)
+              </button>
+            </form>
+            <form action="{{ url_for('auth_switch_demo') }}" method="POST">
+              <input type="hidden" name="username" value="ananya-bakes">
+              <button type="submit" class="persona-btn" style="width: 100%; justify-content: center;">
+                🥐 Ananya (Bakery)
+              </button>
+            </form>
+            <form action="{{ url_for('auth_switch_demo') }}" method="POST">
+              <input type="hidden" name="username" value="aarav-client">
+              <button type="submit" class="persona-btn" style="width: 100%; justify-content: center;">
+                ⭐ Aarav (Client)
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2. SIGN UP FORM -->
+      <div id="auth-signup-section" style="display: {% if mode == 'signup' %}block{% else %}none{% endif %};">
+        <form action="{{ url_for('auth_signup') }}" method="POST">
+          
+          <!-- Role Selector -->
+          <div style="margin-bottom: var(--space-md);">
+            <label style="display: block; font-size: 0.88rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.35rem;">
+              I want to:
+            </label>
+            <div style="display: flex; gap: var(--space-xs);">
+              <label style="flex: 1; border: 1.5px solid var(--color-soft-border); padding: 0.65rem 0.8rem; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; background: var(--color-cream-light);">
+                <input type="radio" name="role" value="vendor" checked onchange="toggleVendorFields(true)">
+                <span>Vendor / Maker / Side Hustler</span>
+              </label>
+              <label style="flex: 1; border: 1.5px solid var(--color-soft-border); padding: 0.65rem 0.8rem; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">
+                <input type="radio" name="role" value="client" onchange="toggleVendorFields(false)">
+                <span>Client / Buyer / Patron</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Name & Username -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+                Full Name *
+              </label>
+              <input 
+                type="text" 
+                name="name" 
+                required 
+                placeholder="Devratna Joshi"
+                style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+              >
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+                Storefront Handle *
+              </label>
+              <input 
+                type="text" 
+                name="username" 
+                required 
+                placeholder="devratna-crafts"
+                style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+              >
+            </div>
+          </div>
+
+          <!-- Vendor specific fields -->
+          <div id="vendor-extra-fields">
+            <div style="margin-bottom: var(--space-sm);">
+              <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+                Business / Studio Name *
+              </label>
+              <input 
+                type="text" 
+                name="business_name" 
+                placeholder="e.g. Earth & Thread Studio"
+                style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+              >
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-bottom: var(--space-sm);">
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+                  Category *
+                </label>
+                <select 
+                  name="category"
+                  style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem; background: #ffffff;"
+                >
+                  <option value="Handmade Crafts & Pottery">Handmade Crafts & Pottery</option>
+                  <option value="Artisanal Leather & Goods">Artisanal Leather & Goods</option>
+                  <option value="Boutique Gourmet & Baking">Boutique Gourmet & Baking</option>
+                  <option value="Visual Arts & Brand Identity">Visual Arts & Brand Identity</option>
+                  <option value="Tutoring & Workshops">Tutoring & Workshops</option>
+                  <option value="Lifestyle & Photography">Lifestyle & Photography</option>
+                </select>
+              </div>
+              <div>
+                <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+                  Location
+                </label>
+                <input 
+                  type="text" 
+                  name="location" 
+                  placeholder="e.g. Jaipur / Mumbai / Pan-India"
+                  style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+                >
+              </div>
+            </div>
+
+            <div style="margin-bottom: var(--space-sm);">
+              <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+                One-Line Tagline
+              </label>
+              <input 
+                type="text" 
+                name="tagline" 
+                placeholder="Handcrafted organic home decor and bespoke ceramics"
+                style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+              >
+            </div>
+          </div>
+
+          <!-- Email & Password -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm); margin-bottom: var(--space-lg);">
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+                Email Address *
+              </label>
+              <input 
+                type="email" 
+                name="email" 
+                required 
+                placeholder="you@email.com"
+                style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+              >
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); margin-bottom: 0.25rem;">
+                Create Password *
+              </label>
+              <input 
+                type="password" 
+                name="password" 
+                required 
+                placeholder="••••••••"
+                style="width: 100%; padding: 0.65rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.92rem;"
+              >
+            </div>
+          </div>
+
+          <button type="submit" class="btn-enterprise-signin" style="width: 100%; padding: 0.85rem; font-size: 1rem; text-align: center; justify-content: center;">
+            Create My Storefront Profile &rarr;
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function switchAuthTab(tab) {
+    const loginSection = document.getElementById("auth-login-section");
+    const signupSection = document.getElementById("auth-signup-section");
+    const loginBtn = document.getElementById("tab-login-btn");
+    const signupBtn = document.getElementById("tab-signup-btn");
+
+    if (tab === "login") {
+      loginSection.style.display = "block";
+      signupSection.style.display = "none";
+      loginBtn.style.color = "var(--color-terracotta)";
+      loginBtn.style.borderBottomColor = "var(--color-terracotta)";
+      signupBtn.style.color = "var(--color-muted-text)";
+      signupBtn.style.borderBottomColor = "transparent";
+    } else {
+      loginSection.style.display = "none";
+      signupSection.style.display = "block";
+      signupBtn.style.color = "var(--color-terracotta)";
+      signupBtn.style.borderBottomColor = "var(--color-terracotta)";
+      loginBtn.style.color = "var(--color-muted-text)";
+      loginBtn.style.borderBottomColor = "transparent";
+    }
+  }
+
+  function toggleVendorFields(isVendor) {
+    const extra = document.getElementById("vendor-extra-fields");
+    if (extra) {
+      extra.style.display = isVendor ? "block" : "none";
+    }
+  }
+</script>
+{% endblock %}

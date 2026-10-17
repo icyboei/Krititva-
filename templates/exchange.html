@@ -54,9 +54,12 @@
         {% endif %}
       </form>
 
-      <!-- View Switcher (Browse Services vs Client Briefs) -->
+      <!-- View Switcher (Browse Storefronts vs Services vs Client Briefs) -->
       <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-md); margin-top: var(--space-xs);">
-        <div style="display: flex; gap: var(--space-xs);">
+        <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+          <a href="{{ url_for('exchange', tab='storefronts', category=active_category, q=search_query) }}" class="btn-role-switch {% if active_tab == 'storefronts' %}active-role{% endif %}" style="padding: 0.5rem 1.2rem; border-radius: var(--radius-pill); font-size: 0.9rem; font-weight: 700; text-decoration: none; display: inline-block; background: {% if active_tab == 'storefronts' %}var(--color-deep-espresso){% else %}var(--color-warm-cream){% endif %}; color: {% if active_tab == 'storefronts' %}#ffffff{% else %}var(--color-deep-espresso){% endif %}; border: 1px solid var(--color-soft-border);">
+            Creator Storefronts ({{ vendors|length }})
+          </a>
           <a href="{{ url_for('exchange', tab='services', category=active_category, q=search_query) }}" class="btn-role-switch {% if active_tab == 'services' %}active-role{% endif %}" style="padding: 0.5rem 1.2rem; border-radius: var(--radius-pill); font-size: 0.9rem; font-weight: 700; text-decoration: none; display: inline-block; background: {% if active_tab == 'services' %}var(--color-deep-espresso){% else %}var(--color-warm-cream){% endif %}; color: {% if active_tab == 'services' %}#ffffff{% else %}var(--color-deep-espresso){% endif %}; border: 1px solid var(--color-soft-border);">
             Verified Capabilities ({{ services|length }})
           </a>
@@ -69,9 +72,10 @@
         <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
           <span style="font-size: 0.82rem; font-weight: 700; color: var(--color-muted-text);">Filter:</span>
           <a href="{{ url_for('exchange', tab=active_tab, category='all', q=search_query) }}" class="filter-chip {% if active_category == 'all' %}active{% endif %}">All</a>
-          <a href="{{ url_for('exchange', tab=active_tab, category='ai-engineering', q=search_query) }}" class="filter-chip {% if active_category == 'ai-engineering' %}active{% endif %}">AI & Agents</a>
-          <a href="{{ url_for('exchange', tab=active_tab, category='security-audit', q=search_query) }}" class="filter-chip {% if active_category == 'security-audit' %}active{% endif %}">Security Audits</a>
-          <a href="{{ url_for('exchange', tab=active_tab, category='data-infrastructure', q=search_query) }}" class="filter-chip {% if active_category == 'data-infrastructure' %}active{% endif %}">Data Pipelines</a>
+          <a href="{{ url_for('exchange', tab=active_tab, category='Handmade', q=search_query) }}" class="filter-chip {% if active_category == 'Handmade' %}active{% endif %}">Crafts & Pottery</a>
+          <a href="{{ url_for('exchange', tab=active_tab, category='Leather', q=search_query) }}" class="filter-chip {% if active_category == 'Leather' %}active{% endif %}">Leather Goods</a>
+          <a href="{{ url_for('exchange', tab=active_tab, category='Gourmet', q=search_query) }}" class="filter-chip {% if active_category == 'Gourmet' %}active{% endif %}">Baking & Food</a>
+          <a href="{{ url_for('exchange', tab=active_tab, category='ai-engineering', q=search_query) }}" class="filter-chip {% if active_category == 'ai-engineering' %}active{% endif %}">AI & Tech</a>
         </div>
       </div>
 
@@ -83,8 +87,100 @@
 <section style="padding: var(--space-2xl) 0 var(--space-3xl);">
   <div class="container">
 
-    {% if active_tab == 'services' %}
-    <!-- 1. Capabilities Catalog (Services) -->
+    {% if active_tab == 'storefronts' %}
+    <!-- 1. Creator & Vendor Storefronts Showcase -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg); flex-wrap: wrap; gap: var(--space-sm);">
+      <div>
+        <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso);">
+          Independent Creator Storefronts & Profiles ({{ vendors|length }})
+        </h2>
+        <p style="font-size: 0.88rem; color: var(--color-muted-text); margin-top: 0.2rem;">
+          Homegrown artisans, side hustlers, and boutique service providers. No custom websites needed—explore profiles and genuine client reviews.
+        </p>
+      </div>
+      <a href="{{ url_for('auth_signup') }}" class="btn-enterprise-signin" style="font-size: 0.88rem; padding: 0.6rem 1.2rem;">
+        + Launch Your Storefront
+      </a>
+    </div>
+
+    {% if vendors|length == 0 %}
+    <div style="background: var(--color-cream-light); border: 1.5px dashed var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-2xl); text-align: center;">
+      <h3 style="font-family: var(--font-editorial); font-size: 1.4rem; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">No creator storefronts matched your search</h3>
+      <p style="color: var(--color-muted-text); margin-bottom: var(--space-md);">Try adjusting your search keywords or resetting filters.</p>
+      <a href="{{ url_for('exchange', tab='storefronts') }}" class="btn-hand-drawn">Reset Filters</a>
+    </div>
+    {% endif %}
+
+    <div class="storefronts-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: var(--space-xl);">
+      {% for v in vendors %}
+      <article class="handcrafted-card" style="min-height: auto; padding: var(--space-xl); background: #ffffff; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <!-- Header with Avatar & Details -->
+          <div style="display: flex; gap: var(--space-md); align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-border-subtle); padding-bottom: var(--space-sm);">
+            <div style="width: 58px; height: 58px; border-radius: var(--radius-pill); background: var(--color-paper-ivory); border: 2px solid var(--color-terracotta); display: flex; align-items: center; justify-content: center; font-family: var(--font-editorial); font-size: 1.5rem; font-weight: 700; color: var(--color-terracotta); flex-shrink: 0;">
+              {{ v.avatar_initials }}
+            </div>
+            <div style="flex: 1;">
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <h3 style="font-family: var(--font-editorial); font-size: 1.45rem; color: var(--color-deep-espresso); margin: 0;">
+                  {{ v.business_name }}
+                </h3>
+                {% if v.verified %}
+                <span title="Verified Artisan & Maker" style="color: #2e7d32; font-size: 0.85rem;">✓</span>
+                {% endif %}
+              </div>
+              <div style="font-size: 0.85rem; color: var(--color-muted-text); font-weight: 600;">
+                by {{ v.name }} &bull; {{ v.badge }}
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size: 0.92rem; color: var(--color-deep-espresso); line-height: 1.55; margin-bottom: var(--space-md);">
+            {{ v.tagline }}
+          </p>
+
+          <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap; margin-bottom: var(--space-md);">
+            <span class="meta-pill rating" style="font-size: 0.78rem;">
+              ★ {{ "%.1f"|format(v.avg_rating) }} ({{ v.reviews_count }} verified reviews)
+            </span>
+            <span class="meta-pill" style="font-size: 0.78rem;">
+              📍 {{ v.location }}
+            </span>
+            <span class="meta-pill highlight" style="font-size: 0.78rem;">
+              ⚡ Replies in {{ v.response_time }}
+            </span>
+          </div>
+
+          <!-- Featured Offerings Preview -->
+          {% if v.activities %}
+          <div style="font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted-text); margin-bottom: 0.35rem;">
+            Sample Listed Activities & Charges:
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: var(--space-md);">
+            {% for act in v.activities[:2] %}
+            <div style="background: var(--color-cream-light); border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); padding: 0.35rem 0.65rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.82rem;">
+              <span style="font-weight: 600; color: var(--color-deep-espresso);">{{ act.theme_icon or '✨' }} {{ act.title }}</span>
+              <span style="font-weight: 700; color: var(--color-terracotta);">{{ act.charges_display }}</span>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+
+        <div style="border-top: 1px dashed var(--color-soft-border); padding-top: var(--space-md); display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.8rem; color: var(--color-muted-text);">
+            {{ v.activities|length }} Activities Listed
+          </span>
+          <a href="{{ url_for('vendor_profile', username=v.username) }}" class="btn-hand-drawn" style="font-size: 0.88rem; padding: 0.45rem 1.1rem;">
+            Visit Storefront &rarr;
+          </a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    {% elif active_tab == 'services' %}
+    <!-- 2. Capabilities Catalog (Services) -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
       <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso);">
         Available Verified Capabilities ({{ services|length }})

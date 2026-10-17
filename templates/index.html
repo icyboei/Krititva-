@@ -116,6 +116,134 @@
   </div>
 </section>
 
+<!-- Featured Maker & Vendor Storefronts Showcase (Core SaaS Feature) -->
+<section style="padding: var(--space-2xl) 0 var(--space-3xl); background: var(--color-paper-ivory); border-bottom: 1px solid var(--color-soft-border);">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: var(--space-md); margin-bottom: var(--space-xl);">
+      <div style="max-width: 720px;">
+        <span class="section-tag">Instant Micro-Storefronts</span>
+        <h2 style="font-family: var(--font-editorial); font-size: clamp(2rem, 3.5vw, 2.8rem); color: var(--color-deep-espresso); line-height: 1.15;">
+          Your Business Profile, Not a 3-Month Website Build
+        </h2>
+        <p style="font-size: 1.05rem; color: var(--color-muted-text); margin-top: var(--space-xs);">
+          Krititva gives vendors, side hustlers, craftables sellers, and part-timers an instant branded digital storefront with transparent activity charges, direct patron inquiry, and verified 5-star review credibility.
+        </p>
+      </div>
+      <div style="display: flex; gap: var(--space-sm); align-items: center;">
+        <a href="{{ url_for('exchange', tab='storefronts') }}" class="btn-hand-drawn">
+          Explore All Storefronts &rarr;
+        </a>
+        <a href="{{ url_for('auth_signup') }}" class="btn-enterprise-signin">
+          + Start Your Storefront
+        </a>
+      </div>
+    </div>
+
+    <!-- Featured Vendor Storefront Cards Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--space-xl);">
+      {% for v in featured_vendors %}
+      <article class="handcrafted-card" style="background: #ffffff; padding: var(--space-xl); min-height: auto; justify-content: space-between; border-color: var(--color-soft-border);">
+        <div>
+          <div style="display: flex; gap: var(--space-md); align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-border-subtle); padding-bottom: var(--space-sm);">
+            <div style="width: 52px; height: 52px; border-radius: var(--radius-pill); background: var(--color-paper-ivory); border: 2px solid var(--color-terracotta); display: flex; align-items: center; justify-content: center; font-family: var(--font-editorial); font-size: 1.3rem; font-weight: 700; color: var(--color-terracotta);">
+              {{ v.avatar_initials }}
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.35rem;">
+                <h3 style="font-family: var(--font-editorial); font-size: 1.35rem; color: var(--color-deep-espresso); margin: 0;">
+                  {{ v.business_name }}
+                </h3>
+                {% if v.verified %}<span style="color: #2e7d32; font-size: 0.8rem;">✓</span>{% endif %}
+              </div>
+              <div style="font-size: 0.8rem; color: var(--color-muted-text);">
+                {{ v.name }} &bull; {{ v.category }}
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size: 0.9rem; color: var(--color-deep-espresso); line-height: 1.5; margin-bottom: var(--space-md);">
+            {{ v.tagline }}
+          </p>
+
+          <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap; margin-bottom: var(--space-md);">
+            <span class="meta-pill rating" style="font-size: 0.78rem;">
+              ★ {{ "%.1f"|format(v.avg_rating) }} ({{ v.reviews_count }} reviews)
+            </span>
+            <span class="meta-pill" style="font-size: 0.78rem;">
+              📍 {{ v.location }}
+            </span>
+          </div>
+
+          {% if v.activities %}
+          <div style="background: var(--color-cream-light); border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); padding: 0.5rem 0.75rem; margin-bottom: var(--space-md); font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 600; color: var(--color-deep-espresso);">{{ v.activities[0].title }}</span>
+            <strong style="color: var(--color-terracotta);">{{ v.activities[0].charges_display }}</strong>
+          </div>
+          {% endif %}
+        </div>
+
+        <div style="border-top: 1px dashed var(--color-soft-border); padding-top: var(--space-sm); display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.8rem; color: var(--color-muted-text);">
+            {{ v.activities|length }} Offerings Listed
+          </span>
+          <a href="{{ url_for('vendor_profile', username=v.username) }}" class="btn-hand-drawn" style="font-size: 0.85rem; padding: 0.45rem 1rem;">
+            Visit Storefront &rarr;
+          </a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <!-- Why Krititva SaaS Comparison Table -->
+    <div style="margin-top: var(--space-3xl); background: #ffffff; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-2xl);">
+      <div style="text-align: center; max-width: 600px; margin: 0 auto var(--space-xl);">
+        <span class="section-tag">Value Comparison</span>
+        <h3 style="font-family: var(--font-editorial); font-size: 2rem; color: var(--color-deep-espresso);">
+          Why Early-Stage Creators Choose Krititva
+        </h3>
+        <p style="color: var(--color-muted-text); font-size: 0.95rem;">
+          Focus on making your craft and serving clients, not fighting DNS records, SSL certificates, and Shopify theme bugs.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-lg);">
+        <div style="background: var(--color-cream-light); border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); padding: var(--space-lg);">
+          <div style="font-size: 2rem; margin-bottom: 0.35rem;">⚡</div>
+          <h4 style="font-family: var(--font-editorial); font-size: 1.3rem; color: var(--color-deep-espresso); margin-bottom: 0.35rem;">60-Second Setup</h4>
+          <p style="font-size: 0.88rem; color: var(--color-deep-espresso); line-height: 1.55;">
+            Register your handle, list your first 3 items or services with appropriate charges, and your customized storefront is immediately live.
+          </p>
+        </div>
+
+        <div style="background: var(--color-cream-light); border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); padding: var(--space-lg);">
+          <div style="font-size: 2rem; margin-bottom: 0.35rem;">💰</div>
+          <h4 style="font-family: var(--font-editorial); font-size: 1.3rem; color: var(--color-deep-espresso); margin-bottom: 0.35rem;">Zero Website Hosting Overhead</h4>
+          <p style="font-size: 0.88rem; color: var(--color-deep-espresso); line-height: 1.55;">
+            No ₹15,000 to ₹50,000 agency development retainers or monthly hosting fees during your business's initial validation phase.
+          </p>
+        </div>
+
+        <div style="background: var(--color-cream-light); border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); padding: var(--space-lg);">
+          <div style="font-size: 2rem; margin-bottom: 0.35rem;">★</div>
+          <h4 style="font-family: var(--font-editorial); font-size: 1.3rem; color: var(--color-deep-espresso); margin-bottom: 0.35rem;">Built-in Rating & Review System</h4>
+          <p style="font-size: 0.88rem; color: var(--color-deep-espresso); line-height: 1.55;">
+            Clients can post verified feedback and rate your activities out of 5 stars, building genuine social proof from day one.
+          </p>
+        </div>
+
+        <div style="background: var(--color-cream-light); border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); padding: var(--space-lg);">
+          <div style="font-size: 2rem; margin-bottom: 0.35rem;">🔗</div>
+          <h4 style="font-family: var(--font-editorial); font-size: 1.3rem; color: var(--color-deep-espresso); margin-bottom: 0.35rem;">Shareable Micro-URL</h4>
+          <p style="font-size: 0.88rem; color: var(--color-deep-espresso); line-height: 1.55;">
+            Drop your clean <code>/profile/your-name</code> link directly in your Instagram bio, WhatsApp catalog, or business card.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- OpenSource Buddy Spotlight Section (Milestone 1 Core Entry Point) -->
 <section class="spotlight-section" id="buddy-preview">
   <div class="container">

@@ -17,6 +17,47 @@
   {% block extra_head %}{% endblock %}
 </head>
 <body>
+  <!-- Top Persona Switcher Bar for Seamless Interactive Testing -->
+  <div class="persona-switcher-bar">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.35rem;">
+      <div style="color: var(--color-muted-text); display: flex; align-items: center; gap: 0.4rem;">
+        <span style="font-weight: 700; color: var(--color-deep-espresso);">Quick Persona Switcher:</span>
+        <span>Try Krititva as:</span>
+      </div>
+      <div style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
+        <form action="{{ url_for('auth_switch_demo') }}" method="POST" style="display: inline;">
+          <input type="hidden" name="username" value="maya-ceramics">
+          <button type="submit" class="persona-btn {% if current_user and current_user.username == 'maya-ceramics' %}active{% endif %}">
+            🏺 Maya (Potter)
+          </button>
+        </form>
+        <form action="{{ url_for('auth_switch_demo') }}" method="POST" style="display: inline;">
+          <input type="hidden" name="username" value="rohan-leather">
+          <button type="submit" class="persona-btn {% if current_user and current_user.username == 'rohan-leather' %}active{% endif %}">
+            👜 Rohan (Leather)
+          </button>
+        </form>
+        <form action="{{ url_for('auth_switch_demo') }}" method="POST" style="display: inline;">
+          <input type="hidden" name="username" value="ananya-bakes">
+          <button type="submit" class="persona-btn {% if current_user and current_user.username == 'ananya-bakes' %}active{% endif %}">
+            🥐 Ananya (Baker)
+          </button>
+        </form>
+        <form action="{{ url_for('auth_switch_demo') }}" method="POST" style="display: inline;">
+          <input type="hidden" name="username" value="aarav-client">
+          <button type="submit" class="persona-btn {% if current_user and current_user.username == 'aarav-client' %}active{% endif %}">
+            ⭐ Aarav (Client)
+          </button>
+        </form>
+        {% if current_user %}
+        <a href="{{ url_for('auth_logout') }}" class="persona-btn" style="color: #c62828; border-color: #ef9a9a;">
+          ✕ Sign Out
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
   <!-- Global Site Navigation Header -->
   <header class="site-header">
     <div class="container nav-container">
@@ -33,17 +74,40 @@
       <!-- Desktop Navigation Menu -->
       <nav class="nav-menu" aria-label="Main Navigation">
         <ul class="nav-links">
-          <li><a href="{{ url_for('exchange') }}" class="nav-link">Capabilities Exchange</a></li>
+          <li><a href="{{ url_for('exchange', tab='storefronts') }}" class="nav-link">Storefronts & Creators</a></li>
+          <li><a href="{{ url_for('exchange', tab='services') }}" class="nav-link">Capabilities Exchange</a></li>
           <li><a href="{{ url_for('workspace') }}" class="nav-link">Project Workspace</a></li>
           <li><a href="{{ url_for('opensource_buddy') }}" class="nav-link">OpenSource Buddy</a></li>
           <li><a href="{{ url_for('index') }}#trust" class="nav-link">How It Works</a></li>
-          <li><a href="{{ url_for('index') }}#about" class="nav-link">About Us</a></li>
         </ul>
       </nav>
 
       <!-- Navigation Actions -->
       <div class="nav-actions">
-        <a href="{{ url_for('exchange') }}" class="btn-enterprise-signin" id="btn-nav-signin">Explore Exchange</a>
+        {% if current_user %}
+          {% if current_user.role == 'vendor' %}
+          <a href="{{ url_for('vendor_profile', username=current_user.username) }}" class="btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+            My Storefront
+          </a>
+          <a href="{{ url_for('vendor_dashboard') }}" class="btn-enterprise-signin" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+            Studio Hub
+          </a>
+          {% else %}
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--color-deep-espresso); background: var(--color-warm-cream); padding: 0.4rem 0.8rem; border-radius: var(--radius-pill); border: 1px solid var(--color-soft-border);">
+            Patron: {{ current_user.name }}
+          </span>
+          <a href="{{ url_for('auth_logout') }}" class="btn-secondary" style="font-size: 0.82rem; padding: 0.45rem 0.85rem;">
+            Log Out
+          </a>
+          {% endif %}
+        {% else %}
+          <a href="{{ url_for('auth_login') }}" class="btn-secondary" style="font-size: 0.88rem; padding: 0.5rem 1rem;">
+            Sign In
+          </a>
+          <a href="{{ url_for('auth_signup') }}" class="btn-enterprise-signin" id="btn-nav-signin" style="font-size: 0.88rem; padding: 0.5rem 1.1rem;">
+            Create Storefront
+          </a>
+        {% endif %}
         <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
           ☰
         </button>

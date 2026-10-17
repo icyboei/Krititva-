@@ -1,13 +1,17 @@
 """
 Krititva Web Application
 "Architecting Value. Operationalizing Expertise."
-Rooted in the Sanskrit concept of कृतित्व.
+Rooted in the Sanskrit concept of कृतित्व (realized output of human intellect and effort).
+
+A SaaS platform that empowers vendors, side hustlers, artisans, craftables sellers,
+and service providers to have their own instant micro-storefront profile with transparent
+activity charges and an authentic client review and 5-star rating system.
 """
 
 import os
 import uuid
 from datetime import datetime
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 
 from services.github_service import (
     parse_github_url,
@@ -16,11 +20,44 @@ from services.github_service import (
     get_repository_issues
 )
 from services.ai_service import generate_issue_roadmap
+from services.store import (
+    USERS_DB,
+    ACTIVITIES_DB,
+    REVIEWS_DB,
+    INQUIRIES_DB,
+    get_user_by_username,
+    get_user_by_email,
+    authenticate_user,
+    register_user,
+    get_all_vendors,
+    get_vendor_profile,
+    get_vendor_listings,
+    get_all_listings,
+    create_listing,
+    add_vendor_review,
+    create_inquiry,
+    get_vendor_inquiries,
+)
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "krititva-dev-secret-key-2026")
 
-# In-Memory Store: Services Catalog (Capabilities offered by providers)
+
+@app.context_processor
+def inject_context():
+    """Injects current logged-in user and all vendors globally into templates."""
+    username = session.get("username")
+    current_user = get_user_by_username(username) if username else None
+    return {
+        "current_user": current_user,
+        "all_vendors": get_all_vendors()
+    }
+
+
+# =========================================================================
+# EXISTING IN-MEMORY ENGAGEMENTS & SPECIALIZED TECHNICAL SERVICES
+# =========================================================================
+
 SERVICES_CATALOG = [
     {
         "id": "srv-1",
@@ -102,7 +139,6 @@ SERVICES_CATALOG = [
     }
 ]
 
-# In-Memory Store: Project Briefs posted by Clients
 PROJECT_BRIEFS = [
     {
         "id": "brief-1",
@@ -132,7 +168,6 @@ PROJECT_BRIEFS = [
     }
 ]
 
-# In-Memory Store: Active Bilateral Engagements
 ENGAGEMENTS = {
     "eng-8042": {
         "id": "eng-8042",
@@ -200,19 +235,33 @@ ENGAGEMENTS = {
 }
 
 
+# =========================================================================
+# CORE PAGES & VIEWS
+# =========================================================================
+
 @app.route("/")
 def index():
     """Renders the main Krititva platform landing page."""
-    return render_template("index.html")
+    featured_vendors = get_all_vendors()[:4]
+    return render_template("index.html", featured_vendors=featured_vendors)
 
 
 @app.route("/exchange")
+@app.route("/explore")
 def exchange():
-    """Renders the bilateral Capability & Services Exchange."""
+    """
+    Renders the Capabilities & Storefronts Exchange.
+    Supports tabs:
+    - 'storefronts': Creator & Vendor storefronts with activities and charges
+    - 'services': Verified Technical Capabilities Catalog
+    - 'briefs': Client Project Briefs
+    """
     category = request.args.get("category", "all")
     search_query = request.args.get("q", "").strip().lower()
-    tab = request.args.get("tab", "services")  # 'services' or 'briefs'
+    default_tab = "storefronts" if request.path == "/explore" else "services"
+    tab = request.args.get("tab", default_tab)
 
+    # Filtered Services Catalog
     filtered_services = SERVICES_CATALOG
     if category != "all":
         filtered_services = [s for s in filtered_services if s["category"] == category]
@@ -225,6 +274,7 @@ def exchange():
             or any(search_query in sk.lower() for sk in s["provider"]["skills"])
         ]
 
+    # Filtered Client Briefs
     filtered_briefs = PROJECT_BRIEFS
     if category != "all":
         filtered_briefs = [b for b in filtered_briefs if b["category"] == category]
@@ -236,13 +286,63 @@ def exchange():
             or search_query in b["client_name"].lower()
         ]
 
+    # Filtered Vendors & Storefronts
+    all_vendors_list = get_all_vendors()
+    filtered_vendors = all_vendors_list
+    if category != "all":
+        filtered_vendors = [v for v in filtered_vendors if category.lower() in v["category"].lower()]
+    if search_query:
+        filtered_vendors = [
+            v for v in filtered_vendors
+            if search_query in v["name"].lower()
+            or search_query in v["business_name"].lower()
+            or search_query in v["category"].lower()
+            or search_query in v["tagline"].lower()
+            or search_query in v["location"].lower()
+            or any(search_query in a["title"].lower() for a in v["activities"])
+        ]
+
     return render_template(
         "exchange.html",
         services=filtered_services,
         briefs=filtered_briefs,
+        vendors=filtered_vendors,
         active_category=category,
         active_tab=tab,
         search_query=search_query
+    )
+
+
+@app.route("/profile/<username>")
+def vendor_profile(username):
+    """
+    Renders a dedicated public storefront / profile page for any creator,
+    vendor, artisan, or service provider.
+    """
+    profile = get_vendor_profile(username)
+    if not profile:
+        return render_template(
+            "index.html",
+            error=f"Storefront '@{username}' was not found."
+        ), 404
+
+    return render_template("profile.html", profile=profile)
+
+
+@app.route("/dashboard")
+def vendor_dashboard():
+    """
+    Renders the private studio management dashboard for logged-in vendors.
+    """
+    username = session.get("username")
+    user = get_user_by_username(username) if username else None
+    vendor_data = get_vendor_profile(username) if user and user.get("role") == "vendor" else None
+    inquiries = get_vendor_inquiries(username) if user else []
+
+    return render_template(
+        "dashboard.html",
+        vendor_data=vendor_data,
+        inquiries=inquiries
     )
 
 
@@ -260,9 +360,223 @@ def opensource_buddy():
     return render_template("opensource_buddy.html")
 
 
-# ==========================================
-# REST API ENDPOINTS FOR EXCHANGE & WORKSPACE
-# ==========================================
+# =========================================================================
+# AUTHENTICATION & PERSONA ROUTES
+# =========================================================================
+
+@app.route("/auth/login", methods=["GET", "POST"])
+def auth_login():
+    """Handles user sign in."""
+    if request.method == "POST":
+        identifier = request.form.get("identifier", "").strip()
+        password = request.form.get("password", "").strip()
+
+        user = authenticate_user(identifier, password)
+        if user:
+            session["username"] = user["username"]
+            if user.get("role") == "vendor":
+                return redirect(url_for("vendor_profile", username=user["username"]))
+            return redirect(url_for("exchange"))
+        else:
+            return render_template("auth.html", mode="login", error="Invalid username/email or password.")
+
+    return render_template("auth.html", mode="login")
+
+
+@app.route("/auth/signup", methods=["GET", "POST"])
+def auth_signup():
+    """Handles new vendor or client registration."""
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip()
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "").strip()
+        role = request.form.get("role", "vendor").strip()
+        business_name = request.form.get("business_name", "").strip()
+        category = request.form.get("category", "").strip()
+        tagline = request.form.get("tagline", "").strip()
+        location = request.form.get("location", "").strip()
+
+        try:
+            user = register_user(
+                name=name,
+                email=email,
+                username=username,
+                password=password,
+                role=role,
+                business_name=business_name,
+                category=category,
+                tagline=tagline,
+                location=location
+            )
+            session["username"] = user["username"]
+            if role == "vendor":
+                return redirect(url_for("vendor_profile", username=user["username"]))
+            return redirect(url_for("exchange"))
+        except ValueError as e:
+            return render_template("auth.html", mode="signup", error=str(e))
+
+    return render_template("auth.html", mode="signup")
+
+
+@app.route("/auth/logout")
+def auth_logout():
+    """Clears user session."""
+    session.clear()
+    return redirect(url_for("index"))
+
+
+@app.route("/auth/switch-demo", methods=["POST"])
+def auth_switch_demo():
+    """Allows one-click switching between pre-seeded demo personas for interactive evaluation."""
+    target_username = request.form.get("username") or (request.get_json() or {}).get("username")
+    if target_username and target_username in USERS_DB:
+        session["username"] = target_username
+        user = USERS_DB[target_username]
+        if user.get("role") == "vendor":
+            return redirect(url_for("vendor_profile", username=target_username))
+        return redirect(url_for("exchange"))
+    return redirect(url_for("exchange"))
+
+
+# =========================================================================
+# REST APIS FOR LISTINGS, REVIEWS & INQUIRIES
+# =========================================================================
+
+@app.route("/api/vendors", methods=["GET"])
+def api_get_vendors():
+    """Lists all registered vendor profiles."""
+    return jsonify(get_all_vendors())
+
+
+@app.route("/api/vendors/<username>", methods=["GET"])
+def api_get_vendor_profile(username):
+    """Retrieves full profile for a specific vendor."""
+    profile = get_vendor_profile(username)
+    if not profile:
+        return jsonify({"error": "Vendor not found"}), 404
+    return jsonify(profile)
+
+
+@app.route("/api/listings/create", methods=["POST"])
+def api_create_listing():
+    """
+    Endpoint for a vendor to list a new activity, craft, or service
+    with appropriate charges.
+    """
+    data = request.get_json() or {}
+    vendor_username = data.get("vendor_username") or session.get("username")
+    if not vendor_username:
+        return jsonify({"error": "You must be signed in as a vendor to create a listing."}), 401
+
+    title = data.get("title", "").strip()
+    if not title:
+        return jsonify({"error": "Activity title is required."}), 400
+
+    charges_display = data.get("charges_display", "").strip()
+    if not charges_display:
+        return jsonify({"error": "Appropriate charges (pricing) must be specified."}), 400
+
+    try:
+        new_listing = create_listing(
+            vendor_username=vendor_username,
+            title=title,
+            category=data.get("category", "Handmade Crafts"),
+            charges_display=charges_display,
+            charges_amount=data.get("charges_amount", 1000.0),
+            pricing_model=data.get("pricing_model", "Fixed Price"),
+            turnaround=data.get("turnaround", "3-5 Business Days"),
+            description=data.get("description", "Handcrafted artisanal offering."),
+            inclusions=data.get("inclusions", []),
+            tags=data.get("tags", []),
+            type_name=data.get("type_name", "Handmade Craftable"),
+            theme_icon=data.get("theme_icon", "✨")
+        )
+        return jsonify({"status": "success", "listing": new_listing}), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+@app.route("/api/vendors/<username>/review", methods=["POST"])
+def api_submit_vendor_review(username):
+    """
+    Endpoint for clients to post feedback and rate the service provider (1-5 stars).
+    Recalculates aggregate rating score and returns updated stats.
+    """
+    data = request.get_json() or {}
+    client_name = data.get("client_name", "").strip()
+    review_title = data.get("review_title", "").strip()
+    comment = data.get("comment", "").strip()
+    rating = data.get("rating")
+    activity_title = data.get("activity_title", "Artisanal Service")
+
+    if not client_name:
+        return jsonify({"error": "Client name is required."}), 400
+    if not review_title:
+        return jsonify({"error": "Review headline is required."}), 400
+    if not comment:
+        return jsonify({"error": "Review feedback comment is required."}), 400
+    if rating is None:
+        return jsonify({"error": "Rating (1 to 5 stars) is required."}), 400
+
+    try:
+        rating_num = float(rating)
+    except (ValueError, TypeError):
+        return jsonify({"error": "Rating must be a valid number between 1 and 5."}), 400
+
+    try:
+        result = add_vendor_review(
+            vendor_username=username,
+            client_name=client_name,
+            rating=rating_num,
+            review_title=review_title,
+            comment=comment,
+            activity_title=activity_title
+        )
+        return jsonify({
+            "status": "success",
+            "review": result["review"],
+            "new_avg_rating": result["new_avg_rating"],
+            "total_reviews": result["total_reviews"],
+            "star_breakdown": result["star_breakdown"]
+        }), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+
+@app.route("/api/inquire", methods=["POST"])
+def api_submit_inquiry():
+    """
+    Endpoint for clients to submit an order request or custom commission inquiry.
+    """
+    data = request.get_json() or {}
+    vendor_username = data.get("vendor_username", "").strip()
+    client_name = data.get("client_name", "").strip()
+    client_email = data.get("client_email", "").strip()
+    client_phone = data.get("client_phone", "").strip()
+    activity_title = data.get("activity_title", "").strip()
+    message = data.get("message", "").strip()
+
+    if not vendor_username or not client_name or not client_email or not message:
+        return jsonify({"error": "Vendor, client name, email, and message are required."}), 400
+
+    try:
+        inq = create_inquiry(
+            vendor_username=vendor_username,
+            client_name=client_name,
+            client_email=client_email,
+            client_phone=client_phone,
+            activity_title=activity_title,
+            message=message
+        )
+        return jsonify({"status": "success", "inquiry": inq}), 201
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+
+
+# =========================================================================
+# EXISTING REST API ENDPOINTS (SERVICES, BRIEFS, WORKSPACE, GITHUB)
+# =========================================================================
 
 @app.route("/api/services", methods=["GET", "POST"])
 def api_services():
@@ -403,13 +717,13 @@ def api_post_message():
     message_text = data.get("content", "").strip()
     sender_role = data.get("role", "client")
     eng_id = data.get("engagement_id", "eng-8042")
-    
+
     if not message_text:
         return jsonify({"error": "Message content cannot be empty"}), 400
 
     target_eng = ENGAGEMENTS.get(eng_id, ENGAGEMENTS["eng-8042"])
     author_name = f"{target_eng['client']['contact_person']} (Client)" if sender_role == "client" else f"{target_eng['provider']['name']} (Provider)"
-    
+
     new_message = {
         "sender": sender_role,
         "author": author_name,
@@ -436,7 +750,7 @@ def api_approve_milestone(milestone_id):
 
 @app.route("/api/workspace/milestone/<int:milestone_id>/submit", methods=["POST"])
 def api_submit_milestone_deliverable(milestone_id):
-    """Provider action to submit deliverable proof (PR link, doc) for client review."""
+    """Provider action to submit deliverable proof for client review."""
     data = request.get_json() or {}
     eng_id = data.get("engagement_id", "eng-8042")
     target_eng = ENGAGEMENTS.get(eng_id, ENGAGEMENTS["eng-8042"])
@@ -448,7 +762,6 @@ def api_submit_milestone_deliverable(milestone_id):
             m["status"] = "In Review"
             m["deliverable"] = deliverable_link
             m["notes"] = f"Delivered by Provider on {datetime.now().strftime('%b %d, %Y')}: {notes}"
-            # Add audit log to chat
             target_eng["messages"].append({
                 "sender": "provider",
                 "author": f"{target_eng['provider']['name']} (Provider)",
@@ -459,10 +772,6 @@ def api_submit_milestone_deliverable(milestone_id):
     return jsonify({"error": "Milestone not found"}), 404
 
 
-# ==========================================
-# OPENSOURCE BUDDY REPO & AI API ENDPOINTS
-# ==========================================
-
 @app.route("/api/analyze-repo", methods=["POST"])
 def api_analyze_repo():
     """Fetches real repository metadata, README, and open issues from GitHub."""
@@ -472,7 +781,7 @@ def api_analyze_repo():
     owner, repo = parse_github_url(raw_url)
     if not owner or not repo:
         return jsonify({
-            "error": "Invalid GitHub repository URL. Please enter a valid URL like 'https://github.com/owner/repository' or 'owner/repository'."
+            "error": "Invalid GitHub repository URL. Please enter a valid URL like 'https://github.com/owner/repository'."
         }), 400
 
     try:
@@ -516,7 +825,7 @@ def api_explain_issue():
 @app.route("/health")
 def health():
     """Health check endpoint."""
-    return {"status": "ok", "app": "Krititva", "version": "1.2.0"}
+    return {"status": "ok", "app": "Krititva", "version": "2.0.0"}
 
 
 if __name__ == "__main__":
