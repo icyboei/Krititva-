@@ -683,7 +683,85 @@ button {
     justify-content: center;
   }
 
-  .feature-cards-grid {
-    grid-template-columns: 1fr;
+/* 11. Exchange & Workspace Elements */
+.filter-chip {
+  display: inline-block;
+  padding: 0.4rem 0.95rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-warm-cream);
+  border: 1px solid var(--color-soft-border);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-deep-espresso);
+  transition: all var(--transition-fast);
+}
+
+.filter-chip:hover,
+.filter-chip.active {
+  background: var(--color-deep-espresso);
+  color: var(--color-white);
+  border-color: var(--color-deep-espresso);
+}
+
+/* Modals */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(56, 35, 24, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-dialog {
+  animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.btn-close-modal {
+  cursor: pointer;
+  background: none;
+  border: none;
+  line-height: 1;
+}
+
+.btn-close-modal:hover {
+  color: var(--color-terracotta);
+}
+
+/* Chat & Workspace */
+.chat-bubble {
+  position: relative;
+  word-break: break-word;
+}
+
+.chat-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  width: 10px;
+  height: 6px;
+}
+
+.chat-client::after {
+  left: 14px;
+}
+
+.chat-provider::after {
+  right: 14px;
 }

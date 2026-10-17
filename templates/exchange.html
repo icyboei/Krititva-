@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+
+{% block title %}Capabilities & Services Exchange | Krititva{% endblock %}
+
+{% block content %}
+<section class="exchange-hero" style="padding: var(--space-2xl) 0 var(--space-xl); background: var(--color-paper-ivory); border-bottom: 1px solid var(--color-soft-border);">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-lg);">
+      <div style="max-width: 680px;">
+        <span class="section-tag">Bilateral Professional Marketplace</span>
+        <h1 class="hero-title" style="font-size: clamp(2.2rem, 4vw, 3.2rem); margin-bottom: var(--space-xs);">
+          Capabilities & Services Exchange
+        </h1>
+        <p class="hero-subtitle" style="margin-bottom: var(--space-md); font-size: 1.1rem;">
+          Connecting enterprise procurement with verified independent contributors. Discover specialized capabilities, negotiate structured milestones, and collaborate in transparent work environments.
+        </p>
+      </div>
+
+      <!-- Quick Action Buttons for Both Roles -->
+      <div style="display: flex; flex-direction: column; gap: var(--space-sm); align-self: center;">
+        <button class="btn-enterprise-signin" id="btn-open-brief-modal" style="font-size: 0.95rem; padding: 0.75rem 1.6rem; text-align: center;">
+          + Post a Project Brief (Client)
+        </button>
+        <button class="btn-secondary" id="btn-open-service-modal" style="font-size: 0.95rem; padding: 0.75rem 1.6rem; text-align: center; border-radius: var(--radius-pill);">
+          + List Your Capability (Provider)
+        </button>
+        <a href="{{ url_for('workspace') }}" class="btn-hand-drawn" style="font-size: 0.92rem; padding: 0.7rem 1.4rem; text-align: center; justify-content: center;">
+          Active Workspace Demo &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- Category Filter Bar -->
+    <div class="filter-bar" style="margin-top: var(--space-xl); display: flex; align-items: center; gap: var(--space-xs); flex-wrap: wrap; border-top: 1px dashed var(--color-soft-border); padding-top: var(--space-md);">
+      <span style="font-size: 0.88rem; font-weight: 700; color: var(--color-deep-espresso); margin-right: var(--space-xs);">Filter by Capability:</span>
+      <a href="{{ url_for('exchange', category='all') }}" class="filter-chip {% if active_category == 'all' %}active{% endif %}">All Capabilities</a>
+      <a href="{{ url_for('exchange', category='ai-engineering') }}" class="filter-chip {% if active_category == 'ai-engineering' %}active{% endif %}">AI & Agent Systems</a>
+      <a href="{{ url_for('exchange', category='security-audit') }}" class="filter-chip {% if active_category == 'security-audit' %}active{% endif %}">Security & OSS Audits</a>
+      <a href="{{ url_for('exchange', category='data-infrastructure') }}" class="filter-chip {% if active_category == 'data-infrastructure' %}active{% endif %}">Data & Cloud Infrastructure</a>
+    </div>
+  </div>
+</section>
+
+<!-- Capability Listings Grid -->
+<section style="padding: var(--space-2xl) 0 var(--space-3xl);">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg);">
+      <h2 style="font-family: var(--font-editorial); font-size: 1.8rem; color: var(--color-deep-espresso);">
+        Available Verified Capabilities ({{ services|length }})
+      </h2>
+      <span style="font-size: 0.88rem; color: var(--color-muted-text);">
+        Demonstrated proficiency &bull; Evidence-backed reviews
+      </span>
+    </div>
+
+    <div class="services-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: var(--space-xl);">
+      {% for service in services %}
+      <article class="service-card handcrafted-card" style="min-height: auto; justify-content: flex-start; gap: var(--space-md);">
+        <!-- Provider Info Banner -->
+        <div style="display: flex; align-items: center; gap: var(--space-sm); padding-bottom: var(--space-sm); border-bottom: 1px solid var(--color-border-subtle);">
+          <div style="width: 44px; height: 44px; border-radius: var(--radius-pill); background: var(--color-paper-ivory); border: 1.5px solid var(--color-burnished-copper); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--color-terracotta);">
+            {{ service.provider.avatar_initials }}
+          </div>
+          <div style="flex: 1;">
+            <div style="display: flex; align-items: center; gap: 0.35rem;">
+              <span style="font-weight: 700; font-size: 0.95rem; color: var(--color-deep-espresso);">{{ service.provider.name }}</span>
+              {% if service.provider.verified %}
+              <span title="Verified Evidence-Backed Provider" style="color: #2e7d32; font-size: 0.85rem;">&#10004;</span>
+              {% endif %}
+            </div>
+            <div style="font-size: 0.8rem; color: var(--color-muted-text);">{{ service.provider.title }}</div>
+          </div>
+          <div style="text-align: right; font-size: 0.8rem; color: var(--color-burnished-copper); font-weight: 600;">
+            &#9733; {{ service.provider.rating }} ({{ service.provider.completed_engagements }})
+          </div>
+        </div>
+
+        <!-- Capability Title & Description -->
+        <div>
+          <h3 style="font-family: var(--font-editorial); font-size: 1.45rem; line-height: 1.25; color: var(--color-deep-espresso); margin-bottom: 0.5rem;">
+            {{ service.title }}
+          </h3>
+          <p style="font-size: 0.92rem; color: var(--color-muted-text); line-height: 1.55;">
+            {{ service.description }}
+          </p>
+        </div>
+
+        <!-- Skills Tags -->
+        <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+          {% for skill in service.provider.skills %}
+          <span style="background: var(--color-paper-ivory); border: 1px solid var(--color-soft-border); padding: 0.2rem 0.55rem; border-radius: var(--radius-pill); font-size: 0.75rem; color: var(--color-deep-espresso);">
+            {{ skill }}
+          </span>
+          {% endfor %}
+        </div>
+
+        <!-- Structured Scope & Deliverables Preview -->
+        <div style="background: var(--color-cream-light); border: 1px dashed var(--color-soft-border); border-radius: var(--radius-sm); padding: var(--space-sm);">
+          <div style="font-size: 0.78rem; text-transform: uppercase; font-weight: 700; color: var(--color-burnished-copper); letter-spacing: 0.05em; margin-bottom: 0.3rem;">
+            Standard Scope & Deliverables:
+          </div>
+          <ul style="list-style: none; font-size: 0.82rem; color: var(--color-muted-text); display: flex; flex-direction: column; gap: 0.25rem;">
+            {% for item in service.deliverables[:3] %}
+            <li style="display: flex; align-items: flex-start; gap: 0.35rem;">
+              <span style="color: var(--color-terracotta);">&bull;</span> {{ item }}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <!-- Commercial Terms Footer -->
+        <div style="margin-top: auto; padding-top: var(--space-sm); border-top: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-xs);">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--color-muted-text); text-transform: uppercase;">Indicative Rate</div>
+            <div style="font-weight: 700; font-size: 1.1rem; color: var(--color-terracotta);">{{ service.indicative_pricing }}</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 0.75rem; color: var(--color-muted-text); text-transform: uppercase;">Engagement Model</div>
+            <div style="font-weight: 600; font-size: 0.88rem; color: var(--color-deep-espresso);">{{ service.pricing_type }}</div>
+          </div>
+        </div>
+
+        <!-- Interaction CTA Button -->
+        <div style="display: flex; gap: var(--space-xs); margin-top: var(--space-xs);">
+          <a href="{{ url_for('workspace') }}" class="btn-hand-drawn" style="flex: 1; justify-content: center; font-size: 0.88rem; padding: 0.6rem 1rem;">
+            Engage & Open Brief &rarr;
+          </a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Modal 1: Post a Project Brief (Client) -->
+<div id="modal-project-brief" class="modal-backdrop" style="display: none;">
+  <div class="modal-dialog handcrafted-card" style="background: var(--color-white); max-width: 600px; width: 90%; margin: 5vh auto; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-soft-border); padding-bottom: var(--space-sm);">
+      <h3 style="font-family: var(--font-editorial); font-size: 1.6rem; color: var(--color-deep-espresso);">
+        Post Structured Project Brief (Client)
+      </h3>
+      <button type="button" class="btn-close-modal" style="font-size: 1.4rem; color: var(--color-muted-text);">&times;</button>
+    </div>
+
+    <form id="form-post-brief" style="display: flex; flex-direction: column; gap: var(--space-md);">
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Project Title</label>
+        <input type="text" id="brief-title" placeholder="e.g., Secure LLM Gateway Architecture with Audit Trail" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Target Capability Category</label>
+        <select id="brief-category" style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+          <option value="ai-engineering">AI & Agent Systems Architecture</option>
+          <option value="security-audit">Open-Source Security & Codebase Audits</option>
+          <option value="data-infrastructure">Data & Cloud Pipelines</option>
+          <option value="general">Full-Stack Capability</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Scope & Problem Statement</label>
+        <textarea id="brief-scope" rows="3" placeholder="Describe the problem, current state, and clear technical requirements..." required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);"></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+        <div>
+          <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Estimated Budget ($USD)</label>
+          <input type="text" id="brief-budget" placeholder="$2,000 - $3,500" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Target Timeline</label>
+          <input type="text" id="brief-timeline" placeholder="2-3 Weeks" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-sm); margin-top: var(--space-sm);">
+        <button type="button" class="btn-secondary btn-close-modal" style="padding: 0.6rem 1.2rem;">Cancel</button>
+        <button type="submit" class="btn-enterprise-signin" style="padding: 0.6rem 1.4rem;">Publish Project Brief &rarr;</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal 2: List a New Capability (Provider) -->
+<div id="modal-list-service" class="modal-backdrop" style="display: none;">
+  <div class="modal-dialog handcrafted-card" style="background: var(--color-white); max-width: 600px; width: 90%; margin: 5vh auto; max-height: 90vh; overflow-y: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-soft-border); padding-bottom: var(--space-sm);">
+      <h3 style="font-family: var(--font-editorial); font-size: 1.6rem; color: var(--color-deep-espresso);">
+        Commercialize Your Knowledge (Provider)
+      </h3>
+      <button type="button" class="btn-close-modal" style="font-size: 1.4rem; color: var(--color-muted-text);">&times;</button>
+    </div>
+
+    <form id="form-list-service" style="display: flex; flex-direction: column; gap: var(--space-md);">
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Your Name & Professional Title</label>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+          <input type="text" id="provider-name" placeholder="Prathmesh Ganeshe" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+          <input type="text" id="provider-title" placeholder="Full-Stack Engineer & AI Dev" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+        </div>
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Capability Offering Title</label>
+        <input type="text" id="service-title" placeholder="e.g., Python Flask & Gemma AI Integration Service" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Category</label>
+        <select id="service-category" style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+          <option value="ai-engineering">AI & Agent Systems</option>
+          <option value="security-audit">Security & OSS Audits</option>
+          <option value="data-infrastructure">Data & Cloud Infrastructure</option>
+        </select>
+      </div>
+
+      <div>
+        <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Capability Description & Value Proposition</label>
+        <textarea id="service-desc" rows="3" placeholder="Explain the specific problem you solve, tools used, and verification standards..." required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);"></textarea>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+        <div>
+          <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Indicative Pricing ($USD)</label>
+          <input type="text" id="service-price" placeholder="$1,500 - $2,500" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+        </div>
+        <div>
+          <label style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 0.3rem;">Typical Duration</label>
+          <input type="text" id="service-duration" placeholder="10-14 Days" required style="width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-family: var(--font-sans);">
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-sm); margin-top: var(--space-sm);">
+        <button type="button" class="btn-secondary btn-close-modal" style="padding: 0.6rem 1.2rem;">Cancel</button>
+        <button type="submit" class="btn-enterprise-signin" style="padding: 0.6rem 1.4rem;">Publish Capability Listing &rarr;</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -36,11 +36,14 @@
       
       <div class="hero-actions">
         <!-- Artisanal Hand-Drawn Ring CTA (Reference Match) -->
-        <a href="#capabilities" class="btn-hand-drawn" id="btn-hero-explore">
+        <a href="{{ url_for('exchange') }}" class="btn-hand-drawn" id="btn-hero-explore">
           Explore Exchange &rarr;
         </a>
-        <a href="{{ url_for('opensource_buddy') }}" class="btn-secondary" id="btn-hero-buddy">
-          Discover Open Source &rarr;
+        <a href="{{ url_for('workspace') }}" class="btn-secondary" id="btn-hero-workspace">
+          Project Workspace &rarr;
+        </a>
+        <a href="{{ url_for('opensource_buddy') }}" class="btn-secondary" id="btn-hero-buddy" style="background: transparent; border-style: dashed;">
+          OpenSource Buddy ✨
         </a>
       </div>
     </div>
@@ -75,7 +78,7 @@
         </div>
         <div class="card-meta">
           <span>Enterprise & Startup Procurement</span>
-          <span>Verified &rarr;</span>
+          <a href="{{ url_for('exchange') }}" style="color: var(--color-terracotta); font-weight: 700;">Procure Now &rarr;</a>
         </div>
       </article>
 
@@ -106,7 +109,7 @@
         </div>
         <div class="card-meta">
           <span>Independent Contributors & Agencies</span>
-          <span>Monetize &rarr;</span>
+          <a href="{{ url_for('exchange') }}" style="color: var(--color-terracotta); font-weight: 700;">List Service &rarr;</a>
         </div>
       </article>
     </div>

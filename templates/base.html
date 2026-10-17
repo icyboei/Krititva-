@@ -33,17 +33,17 @@
       <!-- Desktop Navigation Menu -->
       <nav class="nav-menu" aria-label="Main Navigation">
         <ul class="nav-links">
-          <li><a href="#exchange" class="nav-link">Discover Capital</a></li>
-          <li><a href="#capabilities" class="nav-link">Capabilities</a></li>
+          <li><a href="{{ url_for('exchange') }}" class="nav-link">Capabilities Exchange</a></li>
+          <li><a href="{{ url_for('workspace') }}" class="nav-link">Project Workspace</a></li>
           <li><a href="{{ url_for('opensource_buddy') }}" class="nav-link">OpenSource Buddy</a></li>
-          <li><a href="#trust" class="nav-link">How It Works</a></li>
-          <li><a href="#about" class="nav-link">About Us</a></li>
+          <li><a href="{{ url_for('index') }}#trust" class="nav-link">How It Works</a></li>
+          <li><a href="{{ url_for('index') }}#about" class="nav-link">About Us</a></li>
         </ul>
       </nav>
 
       <!-- Navigation Actions -->
       <div class="nav-actions">
-        <a href="#signin" class="btn-enterprise-signin" id="btn-nav-signin">Enterprise Sign In</a>
+        <a href="{{ url_for('exchange') }}" class="btn-enterprise-signin" id="btn-nav-signin">Explore Exchange</a>
         <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
           ☰
         </button>

@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Interactive Project Workspace — {{ engagement.project_title }} | Krititva{% endblock %}
+
+{% block content %}
+<section style="background: var(--color-paper-ivory); border-bottom: 1px solid var(--color-soft-border); padding: var(--space-2xl) 0 var(--space-lg);">
+  <div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-md);">
+      <div>
+        <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: 0.4rem;">
+          <a href="{{ url_for('exchange') }}" style="font-size: 0.85rem; color: var(--color-terracotta); font-weight: 600;">&larr; Return to Exchange</a>
+          <span style="color: var(--color-soft-border);">&bull;</span>
+          <span class="section-tag" style="margin-bottom: 0;">Bilateral Engagement Workspace</span>
+          <span style="background: #e8f5e9; color: #2e7d32; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: var(--radius-pill);">
+            {{ engagement.status }}
+          </span>
+        </div>
+        <h1 class="hero-title" style="font-size: clamp(1.8rem, 3.5vw, 2.6rem); margin-bottom: var(--space-xs);">
+          {{ engagement.project_title }}
+        </h1>
+        <p style="color: var(--color-muted-text); font-size: 1rem; max-width: 760px;">
+          {{ engagement.scope_summary }}
+        </p>
+      </div>
+
+      <!-- Financial & Escrow Overview -->
+      <div class="handcrafted-card" style="padding: var(--space-md) var(--space-lg); min-height: auto; align-self: center; background: var(--color-white); border-color: var(--color-burnished-copper);">
+        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-muted-text); font-weight: 700;">Milestone Value</div>
+        <div style="font-size: 1.8rem; font-weight: 700; color: var(--color-terracotta); font-family: var(--font-editorial);">{{ engagement.total_value }}</div>
+        <div style="font-size: 0.8rem; color: var(--color-burnished-copper); font-weight: 600;">Governed via Verified Escrow</div>
+      </div>
+    </div>
+
+    <!-- The Two Parties: Client & Provider Bilateral Cards -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); margin-top: var(--space-xl);">
+      <!-- Client Profile -->
+      <div style="background: var(--color-cream-light); border: 1px solid var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-md); display: flex; align-items: center; gap: var(--space-md);">
+        <div style="width: 48px; height: 48px; border-radius: var(--radius-pill); background: var(--color-paper-ivory); border: 1.5px solid var(--color-soft-border); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--color-deep-espresso);">
+          {{ engagement.client.avatar_initials }}
+        </div>
+        <div>
+          <div style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; color: var(--color-burnished-copper);">Service Client</div>
+          <div style="font-weight: 700; font-size: 1.05rem; color: var(--color-deep-espresso);">{{ engagement.client.name }}</div>
+          <div style="font-size: 0.82rem; color: var(--color-muted-text);">{{ engagement.client.contact_person }} ({{ engagement.client.handle }})</div>
+        </div>
+      </div>
+
+      <!-- Provider Profile -->
+      <div style="background: var(--color-cream-light); border: 1px solid var(--color-soft-border); border-radius: var(--radius-md); padding: var(--space-md); display: flex; align-items: center; gap: var(--space-md);">
+        <div style="width: 48px; height: 48px; border-radius: var(--radius-pill); background: var(--color-paper-ivory); border: 1.5px solid var(--color-muted-gold); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--color-terracotta);">
+          {{ engagement.provider.avatar_initials }}
+        </div>
+        <div>
+          <div style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; color: var(--color-terracotta);">Service Provider (Verified)</div>
+          <div style="font-weight: 700; font-size: 1.05rem; color: var(--color-deep-espresso);">
+            {{ engagement.provider.name }} <span style="color: #2e7d32;">&#10004;</span>
+          </div>
+          <div style="font-size: 0.82rem; color: var(--color-muted-text);">{{ engagement.provider.title }} ({{ engagement.provider.handle }})</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Workspace Body: Milestones (Left) & Bilateral Communication (Right) -->
+<section style="padding: var(--space-2xl) 0 var(--space-3xl);">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: var(--space-2xl); align-items: start;">
+      
+      <!-- LEFT COLUMN: Structured Milestones & Deliverables -->
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+          <h2 style="font-family: var(--font-editorial); font-size: 1.7rem; color: var(--color-deep-espresso);">
+            Engagement Milestones & Governance
+          </h2>
+          <span style="font-size: 0.85rem; color: var(--color-muted-text);">3 Total Milestones</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+          {% for m in engagement.milestones %}
+          <div class="handcrafted-card milestone-item" id="milestone-card-{{ m.id }}" style="min-height: auto; padding: var(--space-lg); background: {% if m.status == 'Approved & Released' %}#fbfefb{% elif m.status == 'In Review' %}#fdfcf7{% else %}var(--color-cream-light){% endif %};">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-sm); margin-bottom: var(--space-xs);">
+              <div>
+                <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--color-burnished-copper);">
+                  Milestone {{ m.id }} &bull; {{ m.due_date }}
+                </span>
+                <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--color-deep-espresso); margin-top: 0.2rem;">
+                  {{ m.title }}
+                </h3>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-weight: 700; font-size: 1.15rem; color: var(--color-terracotta);">{{ m.amount }}</div>
+                <span class="milestone-status-badge badge-{{ m.id }}" style="display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.6rem; border-radius: var(--radius-pill); {% if m.status == 'Approved & Released' %}background: #e8f5e9; color: #2e7d32;{% elif m.status == 'In Review' %}background: #fff8e1; color: #b78103;{% else %}background: #eeeeee; color: #757575;{% endif %}">
+                  {{ m.status }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Deliverable Link / Proof -->
+            <div style="background: var(--color-white); border: 1px solid var(--color-soft-border); border-radius: var(--radius-sm); padding: 0.6rem 0.85rem; margin: var(--space-xs) 0; font-size: 0.85rem;">
+              <span style="font-weight: 600; color: var(--color-deep-espresso);">Submitted Deliverable:</span>
+              <span style="color: var(--color-muted-text);">{{ m.deliverable }}</span>
+            </div>
+
+            <!-- Notes & Client Approval Action -->
+            <p style="font-size: 0.84rem; color: var(--color-muted-text); margin-bottom: var(--space-xs);">
+              {{ m.notes }}
+            </p>
+
+            {% if m.status == 'In Review' %}
+            <div style="display: flex; gap: var(--space-xs); margin-top: var(--space-xs);">
+              <button class="btn-hand-drawn btn-approve-milestone" data-id="{{ m.id }}" style="font-size: 0.84rem; padding: 0.5rem 1rem;">
+                Client Action: Approve Deliverable & Release {{ m.amount }} &rarr;
+              </button>
+            </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Direct Bilateral Interaction & Message Thread -->
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-md);">
+          <h2 style="font-family: var(--font-editorial); font-size: 1.7rem; color: var(--color-deep-espresso);">
+            Bilateral Collaboration
+          </h2>
+          <span style="font-size: 0.82rem; color: var(--color-burnished-copper); font-weight: 600;">Live Interaction</span>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="handcrafted-card" style="min-height: 520px; display: flex; flex-direction: column; padding: 0; overflow: hidden; background: var(--color-white);">
+          
+          <!-- Role Persona Switcher for Interactive Demo -->
+          <div style="padding: 0.75rem 1rem; background: var(--color-warm-cream); border-bottom: 1px solid var(--color-soft-border); display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-deep-espresso);">Simulate Chatting As:</span>
+            <div style="display: flex; gap: 0.35rem;">
+              <button type="button" class="btn-role-switch active-role" data-role="client" style="font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: var(--radius-pill); font-weight: 700; background: var(--color-deep-espresso); color: #fff;">
+                Client (Aura)
+              </button>
+              <button type="button" class="btn-role-switch" data-role="provider" style="font-size: 0.78rem; padding: 0.3rem 0.7rem; border-radius: var(--radius-pill); font-weight: 600; background: var(--color-paper-ivory); color: var(--color-deep-espresso); border: 1px solid var(--color-soft-border);">
+                Provider (Devratna)
+              </button>
+            </div>
+          </div>
+
+          <!-- Message History -->
+          <div id="message-stream" style="flex: 1; padding: var(--space-md); overflow-y: auto; display: flex; flex-direction: column; gap: var(--space-sm); max-height: 400px;">
+            {% for msg in engagement.messages %}
+            <div class="chat-bubble chat-{{ msg.sender }}" style="max-width: 85%; align-self: {% if msg.sender == 'client' %}flex-start{% else %}flex-end{% endif %}; background: {% if msg.sender == 'client' %}var(--color-cream-light){% else %}#fdf8f4{% endif %}; border: 1px solid {% if msg.sender == 'client' %}var(--color-soft-border){% else %}#e8c8b5{% endif %}; border-radius: var(--radius-md); padding: 0.7rem 0.95rem;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-sm); margin-bottom: 0.25rem;">
+                <span style="font-size: 0.78rem; font-weight: 700; color: {% if msg.sender == 'client' %}var(--color-deep-espresso){% else %}var(--color-terracotta){% endif %};">
+                  {{ msg.author }}
+                </span>
+                <span style="font-size: 0.7rem; color: var(--color-muted-text);">{{ msg.timestamp }}</span>
+              </div>
+              <p style="font-size: 0.88rem; color: var(--color-deep-espresso); line-height: 1.45; margin: 0;">
+                {{ msg.content }}
+              </p>
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- Message Input Box -->
+          <form id="chat-input-form" style="padding: 0.75rem 1rem; border-top: 1px solid var(--color-soft-border); display: flex; gap: var(--space-xs); background: var(--color-cream-light);">
+            <input 
+              type="text" 
+              id="chat-message-input" 
+              placeholder="Type collaboration update or deliverable review..." 
+              required 
+              style="flex: 1; padding: 0.65rem 0.9rem; border: 1.5px solid var(--color-soft-border); border-radius: var(--radius-sm); font-size: 0.9rem; font-family: var(--font-sans);"
+            >
+            <button type="submit" class="btn-hand-drawn" style="padding: 0.65rem 1.1rem; font-size: 0.88rem;">
+              Send &rarr;
+            </button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
