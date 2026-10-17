@@ -1,7 +1,7 @@
 # Krititva (कृतित्व)
 
 > **"Architecting Value. Operationalizing Expertise."**  
-> *A SaaS platform which helps vendors, side hustlers, service providers, art craftables sellers etc to have a platform (their own profile where they can list out their business) instead of building their own website at initial phase of their business.*
+> *A platform which helps vendors, side hustlers, service providers, art craftables sellers etc to have a platform (their own profile where they can list out their business) instead of building their own website at initial phase of their business.*
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Krititva--brightgreen?logo=github)](https://github.com/icyboei/Krititva-)
 [![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)](https://python.org)
