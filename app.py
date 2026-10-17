@@ -35,7 +35,7 @@ SERVICES_CATALOG = [
             "Deployment Runbook & SLA Documentation"
         ],
         "pricing_type": "Milestone-Based",
-        "indicative_pricing": "$1,800 - $3,500",
+        "indicative_pricing": "₹1,50,000 - ₹2,80,000",
         "typical_duration": "2 - 3 Weeks",
         "sla": "48h initial prototype, 99.9% uptime SLA"
     },
@@ -61,7 +61,7 @@ SERVICES_CATALOG = [
             "Maintainer Security Policy (SECURITY.md)"
         ],
         "pricing_type": "Fixed Engagement",
-        "indicative_pricing": "$1,200",
+        "indicative_pricing": "₹95,000",
         "typical_duration": "5 Business Days",
         "sla": "Comprehensive report within 72h"
     },
@@ -87,7 +87,7 @@ SERVICES_CATALOG = [
             "Pipeline Monitoring Dashboards"
         ],
         "pricing_type": "Milestone-Based",
-        "indicative_pricing": "$2,200 - $4,000",
+        "indicative_pricing": "₹1,80,000 - ₹3,20,000",
         "typical_duration": "3 Weeks",
         "sla": "Zero data-loss guarantee & monitored SLAs"
     }
@@ -111,14 +111,14 @@ ENGAGEMENT_WORKSPACE = {
         "avatar_initials": "DJ",
         "verified": True
     },
-    "total_value": "$3,200",
+    "total_value": "₹2,60,000",
     "scope_summary": "Design and operationalize a private retrieval pipeline with role-based access control, Gemma integration, and real-time citation validation.",
     "milestones": [
         {
             "id": 1,
             "title": "Architecture Blueprint & Threat Model",
             "due_date": "Completed Oct 12, 2026",
-            "amount": "$1,000",
+            "amount": "₹80,000",
             "status": "Approved & Released",
             "deliverable": "System Architecture PDF + OpenAPI Specification v1.0",
             "notes": "Reviewed and verified by Aura Logistics VP Engineering on Oct 12."
@@ -127,7 +127,7 @@ ENGAGEMENT_WORKSPACE = {
             "id": 2,
             "title": "Core Retrieval Pipeline & Guardrails Integration",
             "due_date": "Due Oct 22, 2026",
-            "amount": "$1,400",
+            "amount": "₹1,15,000",
             "status": "In Review",
             "deliverable": "PR #42: Vector Store integration with token verification middleware",
             "notes": "Delivered for review on Oct 16. Pending client sign-off."
@@ -136,7 +136,7 @@ ENGAGEMENT_WORKSPACE = {
             "id": 3,
             "title": "Evaluation Benchmarks & Production Runbook",
             "due_date": "Due Nov 02, 2026",
-            "amount": "$800",
+            "amount": "₹65,000",
             "status": "Upcoming",
             "deliverable": "Automated eval suite with >95% accuracy metric + Dockerized runbook",
             "notes": "Scheduled to begin immediately following Milestone 2 sign-off."
